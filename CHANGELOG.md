@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.10](https://github.com/Endika/kartaak/compare/v0.0.9...v0.0.10) (2026-05-21)
+
+
+### Features
+
+* **errors:** typed AI error hierarchy with translated messages ([b19492a](https://github.com/Endika/kartaak/commit/b19492a16cb307080ecbf09f58a80f8bf59638b5))
+
+
+### Bug Fixes
+
+* **stats:** preserve streak ending yesterday when today has no activity ([ee6cee6](https://github.com/Endika/kartaak/commit/ee6cee6b44379d7a1b024389520d581cb18f340d))
+
 ## [0.0.9](https://github.com/Endika/kartaak/compare/v0.0.8...v0.0.9) (2026-05-21)
 
 
