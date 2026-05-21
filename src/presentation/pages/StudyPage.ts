@@ -1,3 +1,6 @@
+import type { EditCardUseCase } from '@application/use-cases/EditCardUseCase';
+import type { MarkCardIssueUseCase } from '@application/use-cases/MarkCardIssueUseCase';
+import type { ReviewCardUseCase } from '@application/use-cases/ReviewCardUseCase';
 import type { Card, ReviewResult } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
 import type { PageContext } from '../AppRouter';
@@ -6,7 +9,15 @@ import { openEditCardModal } from '../components/EditCardModal';
 import { appShell, escapeHtml } from '../components/Layout';
 import { openMarkIssueModal } from '../components/MarkIssueModal';
 
-export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Study): void {
+export interface StudyPageDeps {
+  reviewCard: ReviewCardUseCase;
+  editCard: EditCardUseCase;
+  markCardIssue: MarkCardIssueUseCase;
+}
+
+type Ctx = PageContext<StudyPageDeps>;
+
+export function renderStudyPage(root: HTMLElement, ctx: Ctx, study: Study): void {
   let currentStudy = study;
   let index = 0;
   let flipped = false;
@@ -73,14 +84,14 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
     });
 
     root.querySelector('#edit-card-btn')?.addEventListener('click', () => {
-      openEditCardModal(ctx.container, currentStudy, card, (next) => {
+      openEditCardModal({ editCard: ctx.deps.editCard }, currentStudy, card, (next) => {
         currentStudy = next;
         paint();
       });
     });
 
     root.querySelector('#issue-card-btn')?.addEventListener('click', () => {
-      openMarkIssueModal(ctx.container, currentStudy, card, (next) => {
+      openMarkIssueModal({ markCardIssue: ctx.deps.markCardIssue }, currentStudy, card, (next) => {
         currentStudy = next;
       });
     });
@@ -93,7 +104,7 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
           b.disabled = true;
         });
         try {
-          const updated = await ctx.container.reviewCard.execute(currentStudy.id, card.id, result);
+          const updated = await ctx.deps.reviewCard.execute(currentStudy.id, card.id, result);
           currentStudy = updated;
           index += 1;
           paint();

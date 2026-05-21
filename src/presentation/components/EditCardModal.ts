@@ -1,11 +1,15 @@
-import type { Container } from '@bootstrap/Container';
+import type { EditCardUseCase } from '@application/use-cases/EditCardUseCase';
 import type { Card } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
 import { escapeHtml } from './Layout';
 import { openModal } from './Modal';
 
+export interface EditCardModalDeps {
+  editCard: EditCardUseCase;
+}
+
 export function openEditCardModal(
-  container: Container,
+  deps: EditCardModalDeps,
   study: Study,
   card: Card,
   onSaved: (study: Study) => void,
@@ -28,7 +32,7 @@ export function openEditCardModal(
       const back = modal.root.querySelector<HTMLTextAreaElement>('[data-edit-back]')?.value ?? '';
       modal.setBusy(true, 'Saving…');
       try {
-        const next = await container.editCard.execute(study.id, card.id, front, back);
+        const next = await deps.editCard.execute(study.id, card.id, front, back);
         modal.close();
         onSaved(next);
       } catch (err) {

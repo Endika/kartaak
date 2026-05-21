@@ -1,12 +1,25 @@
+import type { AddMoreCardsUseCase } from '@application/use-cases/AddMoreCardsUseCase';
+import type { GenerateCardPreviewUseCase } from '@application/use-cases/GenerateCardPreviewUseCase';
 import type { Card } from '@domain/study/entities/Card';
+import type { IStudyRepository } from '@domain/study/repositories/IStudyRepository';
 import {
   type AIModelId,
   createWorkflow,
   type StudyWorkflow,
 } from '@domain/study/value-objects/StudyWorkflow';
+import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { ValidationError } from '@shared/errors/AppError';
 import type { PageContext } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
+
+export interface AddMoreCardsPageDeps {
+  studies: IStudyRepository;
+  apiKeys: IApiKeyStorage;
+  generatePreview: GenerateCardPreviewUseCase;
+  addMoreCards: AddMoreCardsUseCase;
+}
+
+type Ctx = PageContext<AddMoreCardsPageDeps>;
 
 const QUANTITY_OPTIONS = [10, 25, 50, 100, 200];
 
@@ -25,10 +38,10 @@ interface Draft {
 
 export async function renderAddMoreCardsPage(
   root: HTMLElement,
-  ctx: PageContext,
+  ctx: Ctx,
   studyId: string,
 ): Promise<void> {
-  const study = await ctx.container.studies.findById(studyId);
+  const study = await ctx.deps.studies.findById(studyId);
   if (!study) {
     root.innerHTML = appShell(`<p class="text-sm text-slate-500">Study not found.</p>`, {
       back: { label: 'Home', onBackId: 'back-home' },
@@ -174,7 +187,7 @@ export async function renderAddMoreCardsPage(
         return;
       }
 
-      if (!ctx.container.apiKeys.get(workflow.aiModel)) {
+      if (!ctx.deps.apiKeys.get(workflow.aiModel)) {
         errorBox.textContent = `Set a ${workflow.aiModel} API key in Settings first.`;
         errorBox.classList.remove('hidden');
         return;
@@ -183,7 +196,7 @@ export async function renderAddMoreCardsPage(
       submitBtn.disabled = true;
       submitBtn.textContent = 'Generating preview…';
       try {
-        const cards = await ctx.container.generatePreview.execute(workflow);
+        const cards = await ctx.deps.generatePreview.execute(workflow);
         previewCards = cards;
         paint();
       } catch (err) {
@@ -246,7 +259,7 @@ export async function renderAddMoreCardsPage(
           draft,
           study.workflow.includeImages,
         );
-        const next = await ctx.container.generatePreview.execute(workflow);
+        const next = await ctx.deps.generatePreview.execute(workflow);
         previewCards = next;
         paint();
       } catch (err) {
@@ -272,7 +285,7 @@ export async function renderAddMoreCardsPage(
           study: next,
           added,
           duplicatesRemoved,
-        } = await ctx.container.addMoreCards.execute(studyId, workflow);
+        } = await ctx.deps.addMoreCards.execute(studyId, workflow);
         if (duplicatesRemoved > 0) {
           console.info(
             `Added ${added} cards. ${duplicatesRemoved} duplicate(s) skipped vs existing.`,

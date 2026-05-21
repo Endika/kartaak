@@ -1,11 +1,20 @@
+import type { GenerateCardPreviewUseCase } from '@application/use-cases/GenerateCardPreviewUseCase';
+import type { GenerateFullStudyUseCase } from '@application/use-cases/GenerateFullStudyUseCase';
 import type { Card } from '@domain/study/entities/Card';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type { PageContext } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
 
+export interface PreviewPageDeps {
+  generatePreview: GenerateCardPreviewUseCase;
+  generateFullStudy: GenerateFullStudyUseCase;
+}
+
+type Ctx = PageContext<PreviewPageDeps>;
+
 export function renderPreviewPage(
   root: HTMLElement,
-  ctx: PageContext,
+  ctx: Ctx,
   workflow: StudyWorkflow,
   previewCards: Card[],
 ): void {
@@ -68,7 +77,7 @@ export function renderPreviewPage(
     regenerateBtn.disabled = true;
     regenerateBtn.textContent = 'Regenerating…';
     try {
-      const cards = await ctx.container.generatePreview.execute(workflow);
+      const cards = await ctx.deps.generatePreview.execute(workflow);
       ctx.router.navigate({ type: 'preview', workflow, previewCards: cards });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Regeneration failed';
@@ -85,7 +94,7 @@ export function renderPreviewPage(
     generateBtn.disabled = true;
     generateBtn.textContent = `Generating ${workflow.quantity}…`;
     try {
-      const { study, duplicatesRemoved } = await ctx.container.generateFullStudy.execute(workflow);
+      const { study, duplicatesRemoved } = await ctx.deps.generateFullStudy.execute(workflow);
       if (duplicatesRemoved > 0) {
         console.info(`Removed ${duplicatesRemoved} duplicate cards from the batch.`);
       }

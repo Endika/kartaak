@@ -1,17 +1,28 @@
+import type { ImportStudyUseCase } from '@application/use-cases/ImportStudyUseCase';
 import type { Study } from '@domain/study/entities/Study';
+import type { IStudyRepository } from '@domain/study/repositories/IStudyRepository';
+import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import type { PageContext } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
+
+export interface HomePageDeps {
+  studies: IStudyRepository;
+  apiKeys: IApiKeyStorage;
+  importStudy: ImportStudyUseCase;
+}
+
+type Ctx = PageContext<HomePageDeps>;
 
 type SortMode = 'recent' | 'progress' | 'name';
 
 const SORT_STORAGE_KEY = 'kartaak.home.sort';
 
-export async function renderHomePage(root: HTMLElement, ctx: PageContext): Promise<void> {
-  const studies = await ctx.container.studies.findAll();
+export async function renderHomePage(root: HTMLElement, ctx: Ctx): Promise<void> {
+  const studies = await ctx.deps.studies.findAll();
   const hasAnyKey =
-    !!ctx.container.apiKeys.get('gemini') ||
-    !!ctx.container.apiKeys.get('anthropic') ||
-    !!ctx.container.apiKeys.get('openai');
+    !!ctx.deps.apiKeys.get('gemini') ||
+    !!ctx.deps.apiKeys.get('anthropic') ||
+    !!ctx.deps.apiKeys.get('openai');
 
   const apiNotice = hasAnyKey
     ? ''
@@ -104,7 +115,7 @@ export async function renderHomePage(root: HTMLElement, ctx: PageContext): Promi
       try {
         const text = await file.text();
         const parsed = JSON.parse(text);
-        const study = await ctx.container.importStudy.execute(parsed, 'fresh-copy');
+        const study = await ctx.deps.importStudy.execute(parsed, 'fresh-copy');
         ctx.router.navigate({ type: 'study-detail', studyId: study.id });
       } catch (err) {
         alert(err instanceof Error ? err.message : 'Import failed');

@@ -1,6 +1,15 @@
+import type { ApplyIssueResolutionUseCase } from '@application/use-cases/ApplyIssueResolutionUseCase';
+import type { DeleteCardUseCase } from '@application/use-cases/DeleteCardUseCase';
+import type { DeleteStudyUseCase } from '@application/use-cases/DeleteStudyUseCase';
+import type { EditCardUseCase } from '@application/use-cases/EditCardUseCase';
+import type { ExportStudyUseCase } from '@application/use-cases/ExportStudyUseCase';
+import type { RenameStudyUseCase } from '@application/use-cases/RenameStudyUseCase';
+import type { ResolveIssueWithAIUseCase } from '@application/use-cases/ResolveIssueWithAIUseCase';
+import type { UpdateIssueStatusUseCase } from '@application/use-cases/UpdateIssueStatusUseCase';
 import type { Card } from '@domain/study/entities/Card';
 import { pendingIssueCount } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
+import type { IStudyRepository } from '@domain/study/repositories/IStudyRepository';
 import { computeStats } from '@domain/study/services/studyStats';
 import type { PageContext } from '../AppRouter';
 import { openEditCardModal } from '../components/EditCardModal';
@@ -9,12 +18,26 @@ import { openModal } from '../components/Modal';
 import { openResolveIssueModal } from '../components/ResolveIssueModal';
 import { renderStudyStats } from '../components/StudyStats';
 
+export interface StudyDetailPageDeps {
+  studies: IStudyRepository;
+  renameStudy: RenameStudyUseCase;
+  deleteStudy: DeleteStudyUseCase;
+  exportStudy: ExportStudyUseCase;
+  updateIssueStatus: UpdateIssueStatusUseCase;
+  editCard: EditCardUseCase;
+  resolveIssueWithAI: ResolveIssueWithAIUseCase;
+  applyIssueResolution: ApplyIssueResolutionUseCase;
+  deleteCard: DeleteCardUseCase;
+}
+
+type Ctx = PageContext<StudyDetailPageDeps>;
+
 export async function renderStudyDetailPage(
   root: HTMLElement,
-  ctx: PageContext,
+  ctx: Ctx,
   studyId: string,
 ): Promise<void> {
-  const study = await ctx.container.studies.findById(studyId);
+  const study = await ctx.deps.studies.findById(studyId);
   if (!study) {
     root.innerHTML = appShell(`<p class="text-sm text-slate-500">Study not found.</p>`, {
       back: { label: 'Home', onBackId: 'back-home' },
@@ -28,7 +51,7 @@ export async function renderStudyDetailPage(
   paint(root, ctx, study);
 }
 
-function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
+function paint(root: HTMLElement, ctx: Ctx, study: Study): void {
   const stats = computeStats(study);
   const total = stats.total;
   const issuesCount = study.cards.reduce((acc, c) => acc + pendingIssueCount(c), 0);
@@ -101,19 +124,32 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
 
   for (const card of study.cards) {
     root.querySelector(`[data-edit-card="${card.id}"]`)?.addEventListener('click', () => {
-      openEditCardModal(ctx.container, study, card, (next) => paint(root, ctx, next));
+      openEditCardModal({ editCard: ctx.deps.editCard }, study, card, (next) =>
+        paint(root, ctx, next),
+      );
     });
   }
 
   for (const card of study.cards) {
     for (const issue of card.issues ?? []) {
       root.querySelector(`[data-issue-ai="${issue.id}"]`)?.addEventListener('click', () => {
-        openResolveIssueModal(ctx.container, study, card, issue, (next) => paint(root, ctx, next));
+        openResolveIssueModal(
+          {
+            studies: ctx.deps.studies,
+            resolveIssueWithAI: ctx.deps.resolveIssueWithAI,
+            applyIssueResolution: ctx.deps.applyIssueResolution,
+            deleteCard: ctx.deps.deleteCard,
+          },
+          study,
+          card,
+          issue,
+          (next) => paint(root, ctx, next),
+        );
       });
       root
         .querySelector(`[data-issue-resolve="${issue.id}"]`)
         ?.addEventListener('click', async () => {
-          const next = await ctx.container.updateIssueStatus.execute(
+          const next = await ctx.deps.updateIssueStatus.execute(
             study.id,
             card.id,
             issue.id,
@@ -124,7 +160,7 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
       root
         .querySelector(`[data-issue-dismiss="${issue.id}"]`)
         ?.addEventListener('click', async () => {
-          const next = await ctx.container.updateIssueStatus.execute(
+          const next = await ctx.deps.updateIssueStatus.execute(
             study.id,
             card.id,
             issue.id,
@@ -206,8 +242,8 @@ function renderIssuesSection(study: Study): string {
   `;
 }
 
-function exportStudy(ctx: PageContext, study: Study): Promise<void> {
-  return ctx.container.exportStudy.execute(study.id).then((envelope) => {
+function exportStudy(ctx: Ctx, study: Study): Promise<void> {
+  return ctx.deps.exportStudy.execute(study.id).then((envelope) => {
     const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -221,7 +257,7 @@ function exportStudy(ctx: PageContext, study: Study): Promise<void> {
   });
 }
 
-function openRenameModal(ctx: PageContext, study: Study, onRenamed: (study: Study) => void): void {
+function openRenameModal(ctx: Ctx, study: Study, onRenamed: (study: Study) => void): void {
   const modal = openModal(
     {
       title: 'Rename study',
@@ -235,7 +271,7 @@ function openRenameModal(ctx: PageContext, study: Study, onRenamed: (study: Stud
       const value = modal.root.querySelector<HTMLInputElement>('[data-rename-input]')?.value ?? '';
       modal.setBusy(true, 'Saving…');
       try {
-        const next = await ctx.container.renameStudy.execute(study.id, value);
+        const next = await ctx.deps.renameStudy.execute(study.id, value);
         modal.close();
         onRenamed(next);
       } catch (err) {
@@ -246,7 +282,7 @@ function openRenameModal(ctx: PageContext, study: Study, onRenamed: (study: Stud
   );
 }
 
-function confirmDelete(ctx: PageContext, study: Study): void {
+function confirmDelete(ctx: Ctx, study: Study): void {
   const modal = openModal(
     {
       title: 'Delete this study?',
@@ -262,7 +298,7 @@ function confirmDelete(ctx: PageContext, study: Study): void {
     },
     async () => {
       modal.setBusy(true, 'Deleting…');
-      await ctx.container.deleteStudy.execute(study.id);
+      await ctx.deps.deleteStudy.execute(study.id);
       modal.close();
       ctx.router.navigate({ type: 'home' });
     },

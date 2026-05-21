@@ -1,12 +1,22 @@
-import type { Container } from '@bootstrap/Container';
+import type { ApplyIssueResolutionUseCase } from '@application/use-cases/ApplyIssueResolutionUseCase';
+import type { DeleteCardUseCase } from '@application/use-cases/DeleteCardUseCase';
+import type { ResolveIssueWithAIUseCase } from '@application/use-cases/ResolveIssueWithAIUseCase';
 import type { Card } from '@domain/study/entities/Card';
 import type { CardIssue } from '@domain/study/entities/CardIssue';
 import type { Study } from '@domain/study/entities/Study';
+import type { IStudyRepository } from '@domain/study/repositories/IStudyRepository';
 import { escapeHtml } from './Layout';
 import { openModal } from './Modal';
 
+export interface ResolveIssueModalDeps {
+  studies: IStudyRepository;
+  resolveIssueWithAI: ResolveIssueWithAIUseCase;
+  applyIssueResolution: ApplyIssueResolutionUseCase;
+  deleteCard: DeleteCardUseCase;
+}
+
 export function openResolveIssueModal(
-  container: Container,
+  deps: ResolveIssueModalDeps,
   study: Study,
   card: Card,
   issue: CardIssue,
@@ -40,21 +50,21 @@ export function openResolveIssueModal(
       const proposalEl = modal.root.querySelector<HTMLElement>('[data-proposal]');
       if (proposalEl && !proposalEl.classList.contains('hidden')) {
         modal.setBusy(true, 'Saving…');
-        await container.applyIssueResolution.execute(
+        await deps.applyIssueResolution.execute(
           study.id,
           card.id,
           issue.id,
           proposedFront,
           proposedBack,
         );
-        const refreshed = await container.studies.findById(study.id);
+        const refreshed = await deps.studies.findById(study.id);
         if (refreshed) onChanged(refreshed);
         modal.close();
         return;
       }
 
       modal.setBusy(true, 'Asking the AI…');
-      const resolution = await container.resolveIssueWithAI.execute(study.id, card.id, issue.id);
+      const resolution = await deps.resolveIssueWithAI.execute(study.id, card.id, issue.id);
       proposedFront = resolution.proposedFront;
       proposedBack = resolution.proposedBack;
       renderProposal(
@@ -71,7 +81,7 @@ export function openResolveIssueModal(
       const deleteBtn = modal.root.querySelector<HTMLButtonElement>('[data-delete-card]');
       deleteBtn?.addEventListener('click', async () => {
         if (!confirm('Delete this card from the study?')) return;
-        const next = await container.deleteCard.execute(study.id, card.id);
+        const next = await deps.deleteCard.execute(study.id, card.id);
         onChanged(next);
         modal.close();
       });

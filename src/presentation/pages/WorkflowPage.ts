@@ -1,11 +1,20 @@
+import type { GenerateCardPreviewUseCase } from '@application/use-cases/GenerateCardPreviewUseCase';
 import {
   type AIModelId,
   createWorkflow,
   type StudyWorkflow,
 } from '@domain/study/value-objects/StudyWorkflow';
+import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { ValidationError } from '@shared/errors/AppError';
 import type { PageContext, WorkflowDraft } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
+
+export interface WorkflowPageDeps {
+  apiKeys: IApiKeyStorage;
+  generatePreview: GenerateCardPreviewUseCase;
+}
+
+type Ctx = PageContext<WorkflowPageDeps>;
 
 const QUANTITY_OPTIONS = [10, 25, 50, 100, 200, 500];
 
@@ -17,7 +26,7 @@ const MODEL_OPTIONS: { id: AIModelId; label: string; hint: string }[] = [
 
 export function renderWorkflowPage(
   root: HTMLElement,
-  ctx: PageContext,
+  ctx: Ctx,
   initialDraft?: WorkflowDraft,
 ): void {
   const draft: WorkflowDraft = initialDraft ?? {
@@ -149,7 +158,7 @@ export function renderWorkflowPage(
       return;
     }
 
-    if (!ctx.container.apiKeys.get(workflow.aiModel)) {
+    if (!ctx.deps.apiKeys.get(workflow.aiModel)) {
       errorBox.textContent = `Set a ${workflow.aiModel} API key in Settings first.`;
       errorBox.classList.remove('hidden');
       return;
@@ -158,7 +167,7 @@ export function renderWorkflowPage(
     submitBtn.disabled = true;
     submitBtn.textContent = 'Generating preview…';
     try {
-      const previewCards = await ctx.container.generatePreview.execute(workflow);
+      const previewCards = await ctx.deps.generatePreview.execute(workflow);
       ctx.router.navigate({ type: 'preview', workflow, previewCards });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Preview failed';

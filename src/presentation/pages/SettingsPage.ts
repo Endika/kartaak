@@ -1,6 +1,13 @@
 import type { AIModelId } from '@domain/study/value-objects/StudyWorkflow';
+import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import type { PageContext } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
+
+export interface SettingsPageDeps {
+  apiKeys: IApiKeyStorage;
+}
+
+type Ctx = PageContext<SettingsPageDeps>;
 
 interface ProviderInfo {
   id: AIModelId;
@@ -49,7 +56,7 @@ const PROVIDERS: ProviderInfo[] = [
   },
 ];
 
-export function renderSettingsPage(root: HTMLElement, ctx: PageContext): void {
+export function renderSettingsPage(root: HTMLElement, ctx: Ctx): void {
   root.innerHTML = appShell(
     `
     <h1 class="text-2xl font-bold mb-6">Settings</h1>
@@ -67,8 +74,8 @@ export function renderSettingsPage(root: HTMLElement, ctx: PageContext): void {
   }
 }
 
-function renderProviderSection(ctx: PageContext, p: ProviderInfo): string {
-  const currentKey = ctx.container.apiKeys.get(p.id) ?? '';
+function renderProviderSection(ctx: Ctx, p: ProviderInfo): string {
+  const currentKey = ctx.deps.apiKeys.get(p.id) ?? '';
   const masked = currentKey ? `${currentKey.slice(0, 6)}••••••${currentKey.slice(-4)}` : '';
 
   return `
@@ -90,16 +97,16 @@ function renderProviderSection(ctx: PageContext, p: ProviderInfo): string {
   `;
 }
 
-function wireProvider(root: HTMLElement, ctx: PageContext, p: ProviderInfo): void {
+function wireProvider(root: HTMLElement, ctx: Ctx, p: ProviderInfo): void {
   const input = root.querySelector<HTMLInputElement>(`#${p.inputId}`);
   root.querySelector(`#${p.saveId}`)?.addEventListener('click', () => {
     const value = input?.value.trim() ?? '';
     if (!value) return;
-    ctx.container.apiKeys.set(p.id, value);
+    ctx.deps.apiKeys.set(p.id, value);
     ctx.router.navigate({ type: 'settings' });
   });
   root.querySelector(`#${p.clearId}`)?.addEventListener('click', () => {
-    ctx.container.apiKeys.clear(p.id);
+    ctx.deps.apiKeys.clear(p.id);
     ctx.router.navigate({ type: 'settings' });
   });
 }

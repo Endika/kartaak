@@ -28,6 +28,11 @@ export interface WorkflowDraft {
   aiModel: import('@domain/study/value-objects/StudyWorkflow').AIModelId;
 }
 
+export interface PageContext<TDeps> {
+  router: AppRouter;
+  deps: TDeps;
+}
+
 export class AppRouter {
   private view: View = { type: 'home' };
 
@@ -47,34 +52,90 @@ export class AppRouter {
 
   private render(): void {
     this.root.innerHTML = '';
-    const ctx = { router: this, container: this.container };
+    const c = this.container;
     switch (this.view.type) {
       case 'home':
-        renderHomePage(this.root, ctx);
+        void renderHomePage(this.root, {
+          router: this,
+          deps: { studies: c.studies, apiKeys: c.apiKeys, importStudy: c.importStudy },
+        });
         return;
       case 'settings':
-        renderSettingsPage(this.root, ctx);
+        renderSettingsPage(this.root, {
+          router: this,
+          deps: { apiKeys: c.apiKeys },
+        });
         return;
       case 'create-workflow':
-        renderWorkflowPage(this.root, ctx, this.view.draft);
+        renderWorkflowPage(
+          this.root,
+          {
+            router: this,
+            deps: { apiKeys: c.apiKeys, generatePreview: c.generatePreview },
+          },
+          this.view.draft,
+        );
         return;
       case 'preview':
-        renderPreviewPage(this.root, ctx, this.view.workflow, this.view.previewCards);
+        renderPreviewPage(
+          this.root,
+          {
+            router: this,
+            deps: { generatePreview: c.generatePreview, generateFullStudy: c.generateFullStudy },
+          },
+          this.view.workflow,
+          this.view.previewCards,
+        );
         return;
       case 'study':
-        renderStudyPage(this.root, ctx, this.view.study);
+        renderStudyPage(
+          this.root,
+          {
+            router: this,
+            deps: {
+              reviewCard: c.reviewCard,
+              editCard: c.editCard,
+              markCardIssue: c.markCardIssue,
+            },
+          },
+          this.view.study,
+        );
         return;
       case 'study-detail':
-        void renderStudyDetailPage(this.root, ctx, this.view.studyId);
+        void renderStudyDetailPage(
+          this.root,
+          {
+            router: this,
+            deps: {
+              studies: c.studies,
+              renameStudy: c.renameStudy,
+              deleteStudy: c.deleteStudy,
+              exportStudy: c.exportStudy,
+              updateIssueStatus: c.updateIssueStatus,
+              editCard: c.editCard,
+              resolveIssueWithAI: c.resolveIssueWithAI,
+              applyIssueResolution: c.applyIssueResolution,
+              deleteCard: c.deleteCard,
+            },
+          },
+          this.view.studyId,
+        );
         return;
       case 'add-more-cards':
-        void renderAddMoreCardsPage(this.root, ctx, this.view.studyId);
+        void renderAddMoreCardsPage(
+          this.root,
+          {
+            router: this,
+            deps: {
+              studies: c.studies,
+              apiKeys: c.apiKeys,
+              generatePreview: c.generatePreview,
+              addMoreCards: c.addMoreCards,
+            },
+          },
+          this.view.studyId,
+        );
         return;
     }
   }
-}
-
-export interface PageContext {
-  router: AppRouter;
-  container: Container;
 }

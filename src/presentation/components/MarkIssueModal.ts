@@ -1,8 +1,12 @@
-import type { Container } from '@bootstrap/Container';
+import type { MarkCardIssueUseCase } from '@application/use-cases/MarkCardIssueUseCase';
 import type { Card } from '@domain/study/entities/Card';
 import type { CardIssueType } from '@domain/study/entities/CardIssue';
 import type { Study } from '@domain/study/entities/Study';
 import { openModal } from './Modal';
+
+export interface MarkIssueModalDeps {
+  markCardIssue: MarkCardIssueUseCase;
+}
 
 const ISSUE_TYPES: { value: CardIssueType; label: string }[] = [
   { value: 'incorrect', label: 'The answer is incorrect' },
@@ -13,7 +17,7 @@ const ISSUE_TYPES: { value: CardIssueType; label: string }[] = [
 ];
 
 export function openMarkIssueModal(
-  container: Container,
+  deps: MarkIssueModalDeps,
   study: Study,
   card: Card,
   onSaved: (study: Study) => void,
@@ -48,7 +52,7 @@ export function openMarkIssueModal(
         modal.root.querySelector<HTMLTextAreaElement>('[data-issue-description]')?.value ?? '';
       modal.setBusy(true, 'Saving…');
       try {
-        const { study: next } = await container.markCardIssue.execute(
+        const { study: next } = await deps.markCardIssue.execute(
           study.id,
           card.id,
           type,
