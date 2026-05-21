@@ -6,7 +6,6 @@ import type { ExportStudyUseCase } from '@application/use-cases/ExportStudyUseCa
 import type { RenameStudyUseCase } from '@application/use-cases/RenameStudyUseCase';
 import type { ResolveIssueWithAIUseCase } from '@application/use-cases/ResolveIssueWithAIUseCase';
 import type { UpdateIssueStatusUseCase } from '@application/use-cases/UpdateIssueStatusUseCase';
-import type { Card } from '@domain/study/entities/Card';
 import { pendingIssueCount } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
 import type { IStudyRepository } from '@domain/study/repositories/IStudyRepository';
@@ -17,6 +16,7 @@ import { appShell, escapeHtml } from '../components/Layout';
 import { openModal } from '../components/Modal';
 import { openResolveIssueModal } from '../components/ResolveIssueModal';
 import { renderStudyStats } from '../components/StudyStats';
+import { renderStudyDetailView } from './study-detail/view';
 
 export interface StudyDetailPageDeps {
   studies: IStudyRepository;
@@ -53,83 +53,52 @@ export async function renderStudyDetailPage(
 
 function paint(root: HTMLElement, ctx: Ctx, study: Study): void {
   const stats = computeStats(study);
-  const total = stats.total;
   const issuesCount = study.cards.reduce((acc, c) => acc + pendingIssueCount(c), 0);
+  const repaint = (next: Study): void => paint(root, ctx, next);
 
-  root.innerHTML = appShell(
-    `
-    <header class="mb-6">
-      <div class="flex items-start justify-between gap-3 mb-1">
-        <h1 class="text-2xl font-bold">${escapeHtml(study.name)}</h1>
-        <button id="rename-btn" class="text-sm text-slate-400 hover:text-primary transition shrink-0" aria-label="Rename study">✏️ Rename</button>
-      </div>
-      <p class="text-sm text-slate-500">
-        ${escapeHtml(study.workflow.theme)}
-        ${study.workflow.topics.length > 0 ? ` · ${escapeHtml(study.workflow.topics.join(', '))}` : ''}
-        · model: ${escapeHtml(study.workflow.aiModel)}
-      </p>
-    </header>
+  root.innerHTML = appShell(renderStudyDetailView(study, stats, issuesCount, renderStudyStats), {
+    back: { label: 'Studies', onBackId: 'back-home' },
+  });
 
-    <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-      ${statTile('Total', String(total), 'slate')}
-      ${statTile('New', String(stats.newCount), 'sky')}
-      ${statTile('Learning', String(stats.learning), 'amber')}
-      ${statTile('Learned', `${stats.learned} (${stats.learnedPct}%)`, 'emerald')}
-    </section>
+  wireHeader(root, ctx, study, repaint);
+  wireActions(root, ctx, study);
+  wireCards(root, ctx, study, repaint);
+  wireIssues(root, ctx, study, repaint);
+}
 
-    ${renderStudyStats(stats)}
-
-    <section class="flex flex-wrap gap-2 mb-6">
-      <button id="action-study" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition">▶ Study</button>
-      <button id="action-add-more" class="px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition">+ Add more</button>
-      <button id="action-export" class="px-4 py-2 rounded-lg border border-slate-300 text-sm hover:bg-slate-100 transition">📤 Export</button>
-      <button id="action-delete" class="px-4 py-2 rounded-lg border border-red-200 text-sm text-danger hover:bg-red-50 transition ml-auto">🗑 Delete</button>
-    </section>
-
-    ${issuesCount > 0 ? renderIssuesSection(study) : ''}
-
-    <section>
-      <h2 class="font-semibold mb-3">Cards <span class="text-slate-400 font-normal">(${total})</span></h2>
-      <ul class="space-y-2">
-        ${study.cards.map((c, i) => cardRow(c, i)).join('')}
-      </ul>
-    </section>
-  `,
-    { back: { label: 'Studies', onBackId: 'back-home' } },
-  );
-
+function wireHeader(root: HTMLElement, ctx: Ctx, study: Study, repaint: (s: Study) => void): void {
   root.querySelector('#back-home')?.addEventListener('click', () => {
     ctx.router.navigate({ type: 'home' });
   });
+  root.querySelector('#rename-btn')?.addEventListener('click', () => {
+    openRenameModal(ctx, study, repaint);
+  });
+}
 
+function wireActions(root: HTMLElement, ctx: Ctx, study: Study): void {
   root.querySelector('#action-study')?.addEventListener('click', () => {
     ctx.router.navigate({ type: 'study', study });
   });
-
-  root.querySelector('#rename-btn')?.addEventListener('click', () => {
-    openRenameModal(ctx, study, (next) => paint(root, ctx, next));
-  });
-
   root.querySelector('#action-add-more')?.addEventListener('click', () => {
     ctx.router.navigate({ type: 'add-more-cards', studyId: study.id });
   });
-
   root.querySelector('#action-export')?.addEventListener('click', () => {
     void exportStudy(ctx, study);
   });
-
   root.querySelector('#action-delete')?.addEventListener('click', () => {
     confirmDelete(ctx, study);
   });
+}
 
+function wireCards(root: HTMLElement, ctx: Ctx, study: Study, repaint: (s: Study) => void): void {
   for (const card of study.cards) {
     root.querySelector(`[data-edit-card="${card.id}"]`)?.addEventListener('click', () => {
-      openEditCardModal({ editCard: ctx.deps.editCard }, study, card, (next) =>
-        paint(root, ctx, next),
-      );
+      openEditCardModal({ editCard: ctx.deps.editCard }, study, card, repaint);
     });
   }
+}
 
+function wireIssues(root: HTMLElement, ctx: Ctx, study: Study, repaint: (s: Study) => void): void {
   for (const card of study.cards) {
     for (const issue of card.issues ?? []) {
       root.querySelector(`[data-issue-ai="${issue.id}"]`)?.addEventListener('click', () => {
@@ -143,7 +112,7 @@ function paint(root: HTMLElement, ctx: Ctx, study: Study): void {
           study,
           card,
           issue,
-          (next) => paint(root, ctx, next),
+          repaint,
         );
       });
       root
@@ -155,7 +124,7 @@ function paint(root: HTMLElement, ctx: Ctx, study: Study): void {
             issue.id,
             'resolve',
           );
-          paint(root, ctx, next);
+          repaint(next);
         });
       root
         .querySelector(`[data-issue-dismiss="${issue.id}"]`)
@@ -166,80 +135,10 @@ function paint(root: HTMLElement, ctx: Ctx, study: Study): void {
             issue.id,
             'dismiss',
           );
-          paint(root, ctx, next);
+          repaint(next);
         });
     }
   }
-}
-
-function statTile(label: string, value: string, tone: string): string {
-  const palette: Record<string, string> = {
-    slate: 'bg-slate-100 text-slate-700',
-    sky: 'bg-sky-50 text-sky-700',
-    amber: 'bg-amber-50 text-amber-700',
-    emerald: 'bg-emerald-50 text-emerald-700',
-  };
-  return `
-    <div class="rounded-lg ${palette[tone] ?? palette.slate} px-3 py-2">
-      <div class="text-xs uppercase tracking-wide opacity-70">${escapeHtml(label)}</div>
-      <div class="text-lg font-semibold">${escapeHtml(value)}</div>
-    </div>
-  `;
-}
-
-function cardRow(card: Card, index: number): string {
-  const statusColor = {
-    new: 'bg-sky-100 text-sky-700',
-    learning: 'bg-amber-100 text-amber-700',
-    learned: 'bg-emerald-100 text-emerald-700',
-  }[card.status];
-  const issuesBadge =
-    pendingIssueCount(card) > 0
-      ? `<span class="text-xs rounded-full bg-red-100 text-red-700 px-2 py-0.5">⚠ ${pendingIssueCount(card)}</span>`
-      : '';
-  return `
-    <li class="rounded-lg border border-slate-200 bg-white px-3 py-2 flex items-start gap-3">
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-xs text-slate-400">#${index + 1}</span>
-          <span class="text-xs rounded-full px-2 py-0.5 ${statusColor}">${card.status}</span>
-          ${card.isEdited ? '<span class="text-xs text-slate-400">edited</span>' : ''}
-          ${issuesBadge}
-        </div>
-        <div class="text-sm font-medium text-slate-900 truncate">${escapeHtml(card.front)}</div>
-        <div class="text-xs text-slate-500 truncate">${escapeHtml(card.back)}</div>
-      </div>
-      <button data-edit-card="${card.id}" class="text-slate-400 hover:text-primary text-sm shrink-0" aria-label="Edit card">✏️</button>
-    </li>
-  `;
-}
-
-function renderIssuesSection(study: Study): string {
-  const rows: string[] = [];
-  for (const card of study.cards) {
-    for (const issue of card.issues ?? []) {
-      if (issue.status !== 'pending') continue;
-      rows.push(`
-        <li class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-          <div class="text-xs uppercase tracking-wide text-amber-700 mb-1">${escapeHtml(issue.type)}</div>
-          <div class="text-sm text-slate-900 mb-1">${escapeHtml(card.front)}</div>
-          ${issue.description ? `<div class="text-xs text-slate-600 mb-2">${escapeHtml(issue.description)}</div>` : ''}
-          <div class="flex flex-wrap gap-2">
-            <button data-issue-ai="${issue.id}" data-card-id="${card.id}" class="text-xs px-2.5 py-1 rounded bg-primary text-white hover:opacity-90 transition">🤖 Resolve with AI</button>
-            <button data-issue-resolve="${issue.id}" class="text-xs px-2.5 py-1 rounded bg-success text-white hover:opacity-90 transition">Mark resolved</button>
-            <button data-issue-dismiss="${issue.id}" class="text-xs px-2.5 py-1 rounded border border-slate-300 hover:bg-slate-100 transition">Dismiss</button>
-          </div>
-        </li>
-      `);
-    }
-  }
-  if (rows.length === 0) return '';
-  return `
-    <section class="mb-6">
-      <h2 class="font-semibold mb-3">Pending issues <span class="text-slate-400 font-normal">(${rows.length})</span></h2>
-      <ul class="space-y-2">${rows.join('')}</ul>
-    </section>
-  `;
 }
 
 function exportStudy(ctx: Ctx, study: Study): Promise<void> {

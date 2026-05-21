@@ -8,6 +8,8 @@ import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { ValidationError } from '@shared/errors/AppError';
 import type { PageContext, WorkflowDraft } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
+import { MODEL_OPTIONS } from '../components/modelOptions';
+import { wireToggleGroup } from '../components/toggleGroup';
 
 export interface WorkflowPageDeps {
   apiKeys: IApiKeyStorage;
@@ -17,12 +19,6 @@ export interface WorkflowPageDeps {
 type Ctx = PageContext<WorkflowPageDeps>;
 
 const QUANTITY_OPTIONS = [10, 25, 50, 100, 200, 500];
-
-const MODEL_OPTIONS: { id: AIModelId; label: string; hint: string }[] = [
-  { id: 'gemini', label: 'Gemini', hint: 'gemini-2.5-flash · cheapest, works browser-direct' },
-  { id: 'anthropic', label: 'Claude', hint: 'claude-haiku-4-5 · works browser-direct via header' },
-  { id: 'openai', label: 'OpenAI', hint: 'gpt-4o-mini · CORS-blocked from browsers, needs proxy' },
-];
 
 export function renderWorkflowPage(
   root: HTMLElement,
@@ -176,27 +172,6 @@ export function renderWorkflowPage(
       submitBtn.disabled = false;
       submitBtn.textContent = 'Generate preview →';
     }
-  });
-}
-
-function wireToggleGroup(
-  root: HTMLElement,
-  buttonSelector: string,
-  hiddenSelector: string,
-  dataAttr: string,
-  classFor: (selected: boolean) => string,
-): void {
-  const buttons = root.querySelectorAll<HTMLButtonElement>(buttonSelector);
-  const hidden = root.querySelector<HTMLInputElement>(hiddenSelector);
-  const datasetKey = dataAttr;
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const value = btn.dataset[datasetKey] ?? '';
-      if (hidden) hidden.value = value;
-      buttons.forEach((b) => {
-        b.className = classFor(b.dataset[datasetKey] === value);
-      });
-    });
   });
 }
 
