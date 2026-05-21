@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/Endika/kartaak/compare/v0.0.4...v0.0.5) (2026-05-21)
+
+
+### Bug Fixes
+
+* **ai:** switch gemini model from 1.5-flash to 2.5-flash ([56b828f](https://github.com/Endika/kartaak/commit/56b828fe31b0d8d9a44794726b12d9f6d0024fe5))
+
 ## [0.0.4](https://github.com/Endika/kartaak/compare/v0.0.3...v0.0.4) (2026-05-21)
 
 
