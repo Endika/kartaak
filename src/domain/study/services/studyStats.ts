@@ -9,6 +9,9 @@ export interface StudyStatsSnapshot {
   learnedPct: number;
   streakDays: number;
   reviewedLast30Days: number;
+  daysStudiedTotal: number;
+  avgPerActiveDay: number;
+  bestDay: { date: DateKey; reviewed: number } | null;
   daily: { date: DateKey; reviewed: number; learnedTransitions: number }[];
 }
 
@@ -33,6 +36,13 @@ export function computeStats(study: Study, days = 30): StudyStatsSnapshot {
     });
   }
 
+  const activeDays = history.filter((d) => d.reviewed > 0);
+  const reviewedTotal = history.reduce((acc, d) => acc + d.reviewed, 0);
+  const bestDayEntry = activeDays.reduce<DailyActivity | null>(
+    (best, d) => (best && best.reviewed >= d.reviewed ? best : d),
+    null,
+  );
+
   return {
     total,
     newCount,
@@ -41,6 +51,10 @@ export function computeStats(study: Study, days = 30): StudyStatsSnapshot {
     learnedPct,
     streakDays: computeStreak(byDate),
     reviewedLast30Days: daily.reduce((acc, d) => acc + d.reviewed, 0),
+    daysStudiedTotal: activeDays.length,
+    avgPerActiveDay:
+      activeDays.length === 0 ? 0 : Math.round((reviewedTotal / activeDays.length) * 10) / 10,
+    bestDay: bestDayEntry ? { date: bestDayEntry.date, reviewed: bestDayEntry.reviewed } : null,
     daily,
   };
 }

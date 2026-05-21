@@ -1,12 +1,13 @@
 import type { Card } from '@domain/study/entities/Card';
 import { pendingIssueCount } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
-import { computeStats, type StudyStatsSnapshot } from '@domain/study/services/studyStats';
+import { computeStats } from '@domain/study/services/studyStats';
 import type { PageContext } from '../AppRouter';
 import { openEditCardModal } from '../components/EditCardModal';
 import { appShell, escapeHtml } from '../components/Layout';
 import { openModal } from '../components/Modal';
 import { openResolveIssueModal } from '../components/ResolveIssueModal';
+import { renderStudyStats } from '../components/StudyStats';
 
 export async function renderStudyDetailPage(
   root: HTMLElement,
@@ -53,7 +54,7 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
       ${statTile('Learned', `${stats.learned} (${stats.learnedPct}%)`, 'emerald')}
     </section>
 
-    ${renderProgressBlock(stats)}
+    ${renderStudyStats(stats)}
 
     <section class="flex flex-wrap gap-2 mb-6">
       <button id="action-study" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition">▶ Study</button>
@@ -133,41 +134,6 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
         });
     }
   }
-}
-
-function renderProgressBlock(stats: StudyStatsSnapshot): string {
-  const max = Math.max(1, ...stats.daily.map((d) => d.reviewed));
-  const cells = stats.daily
-    .map((d) => {
-      const intensity = d.reviewed === 0 ? 0 : Math.min(4, Math.ceil((d.reviewed / max) * 4));
-      const palette = [
-        'bg-slate-100',
-        'bg-emerald-200',
-        'bg-emerald-300',
-        'bg-emerald-400',
-        'bg-emerald-600',
-      ];
-      const title = `${d.date} · ${d.reviewed} reviewed${d.learnedTransitions > 0 ? ` · ${d.learnedTransitions} learned` : ''}`;
-      return `<div class="h-4 rounded-sm ${palette[intensity]}" title="${title}"></div>`;
-    })
-    .join('');
-
-  return `
-    <section class="rounded-xl border border-slate-200 bg-white p-4 mb-6">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-sm">Activity · last 30 days</h2>
-        <div class="text-xs text-slate-500">
-          <strong class="text-base text-slate-900">${stats.streakDays}</strong>
-          day${stats.streakDays === 1 ? '' : 's'} streak ·
-          <strong class="text-base text-slate-900">${stats.reviewedLast30Days}</strong>
-          reviewed
-        </div>
-      </div>
-      <div class="grid grid-cols-15 sm:grid-cols-30 gap-1" style="grid-template-columns: repeat(30, minmax(0, 1fr));">
-        ${cells}
-      </div>
-    </section>
-  `;
 }
 
 function statTile(label: string, value: string, tone: string): string {
