@@ -5,6 +5,7 @@ import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import { renderHomePage } from './pages/HomePage';
 import { renderPreviewPage } from './pages/PreviewPage';
 import { renderSettingsPage } from './pages/SettingsPage';
+import { renderStudyDetailPage } from './pages/StudyDetailPage';
 import { renderStudyPage } from './pages/StudyPage';
 import { renderWorkflowPage } from './pages/WorkflowPage';
 
@@ -13,7 +14,8 @@ export type View =
   | { type: 'settings' }
   | { type: 'create-workflow'; draft?: WorkflowDraft }
   | { type: 'preview'; workflow: StudyWorkflow; previewCards: Card[] }
-  | { type: 'study'; study: Study };
+  | { type: 'study'; study: Study }
+  | { type: 'study-detail'; studyId: string };
 
 export interface WorkflowDraft {
   theme: string;
@@ -21,6 +23,7 @@ export interface WorkflowDraft {
   instructions: string;
   quantity: number;
   includeImages: boolean;
+  aiModel: import('@domain/study/value-objects/StudyWorkflow').AIModelId;
 }
 
 export class AppRouter {
@@ -58,6 +61,9 @@ export class AppRouter {
         return;
       case 'study':
         renderStudyPage(this.root, ctx, this.view.study);
+        return;
+      case 'study-detail':
+        void renderStudyDetailPage(this.root, ctx, this.view.studyId);
         return;
     }
   }

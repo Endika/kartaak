@@ -57,6 +57,7 @@ export function renderPreviewPage(
         instructions: workflow.instructions,
         quantity: workflow.quantity,
         includeImages: workflow.includeImages,
+        aiModel: workflow.aiModel,
       },
     });
   });
@@ -88,7 +89,7 @@ export function renderPreviewPage(
       if (duplicatesRemoved > 0) {
         console.info(`Removed ${duplicatesRemoved} duplicate cards from the batch.`);
       }
-      ctx.router.navigate({ type: 'study', study });
+      ctx.router.navigate({ type: 'study-detail', studyId: study.id });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Generation failed';
       errorBox.textContent = message;

@@ -28,11 +28,13 @@ export async function renderHomePage(root: HTMLElement, ctx: PageContext): Promi
       <h1 class="text-2xl font-bold">My studies</h1>
       <div class="flex gap-2">
         <button id="settings-btn" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 hover:bg-slate-100 transition">Settings</button>
+        <button id="import-btn" class="px-3 py-1.5 rounded-lg border border-slate-300 text-sm hover:bg-slate-100 transition">Import</button>
         <button id="create-btn" class="px-4 py-1.5 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition">+ New study</button>
       </div>
     </div>
     ${apiNotice}
     ${studiesHtml}
+    <input id="import-file" type="file" accept="application/json,.json" class="hidden" />
   `);
 
   root.querySelector('#create-btn')?.addEventListener('click', () => {
@@ -48,9 +50,27 @@ export async function renderHomePage(root: HTMLElement, ctx: PageContext): Promi
     ctx.router.navigate({ type: 'settings' });
   });
 
+  const importBtn = root.querySelector<HTMLButtonElement>('#import-btn');
+  const importInput = root.querySelector<HTMLInputElement>('#import-file');
+  importBtn?.addEventListener('click', () => importInput?.click());
+  importInput?.addEventListener('change', async () => {
+    const file = importInput.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const study = await ctx.container.importStudy.execute(parsed, 'fresh-copy');
+      ctx.router.navigate({ type: 'study-detail', studyId: study.id });
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Import failed');
+    } finally {
+      importInput.value = '';
+    }
+  });
+
   for (const study of studies) {
     root.querySelector(`[data-open-study="${study.id}"]`)?.addEventListener('click', () => {
-      ctx.router.navigate({ type: 'study', study });
+      ctx.router.navigate({ type: 'study-detail', studyId: study.id });
     });
   }
 }

@@ -1,9 +1,19 @@
-import { createWorkflow, type StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
+import {
+  type AIModelId,
+  createWorkflow,
+  type StudyWorkflow,
+} from '@domain/study/value-objects/StudyWorkflow';
 import { ValidationError } from '@shared/errors/AppError';
 import type { PageContext, WorkflowDraft } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
 
 const QUANTITY_OPTIONS = [10, 25, 50, 100, 200, 500];
+
+const MODEL_OPTIONS: { id: AIModelId; label: string; hint: string }[] = [
+  { id: 'gemini', label: 'Gemini', hint: 'gemini-2.5-flash · cheapest, works browser-direct' },
+  { id: 'anthropic', label: 'Claude', hint: 'claude-haiku-4-5 · works browser-direct via header' },
+  { id: 'openai', label: 'OpenAI', hint: 'gpt-4o-mini · CORS-blocked from browsers, needs proxy' },
+];
 
 export function renderWorkflowPage(
   root: HTMLElement,
@@ -16,6 +26,7 @@ export function renderWorkflowPage(
     instructions: '',
     quantity: 50,
     includeImages: false,
+    aiModel: 'gemini',
   };
 
   root.innerHTML = appShell(
@@ -43,6 +54,25 @@ export function renderWorkflowPage(
         hint: 'Tell the AI how you want cards. Format, difficulty, style. Leave blank for sensible defaults.',
         input: `<textarea id="instructions" name="instructions" rows="4"
                           class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-primary focus:outline-none">${escapeHtml(draft.instructions)}</textarea>`,
+      })}
+
+      ${fieldGroup({
+        label: 'AI model',
+        hint: 'Pick a provider. Make sure you have its API key in Settings.',
+        input: `<div class="grid sm:grid-cols-3 gap-2" role="radiogroup">
+          ${MODEL_OPTIONS.map(
+            (m) => `<button type="button" data-model="${m.id}"
+                       class="text-left px-3 py-2 rounded-lg border text-sm transition ${
+                         m.id === draft.aiModel
+                           ? 'border-primary bg-primary/5'
+                           : 'border-slate-300 bg-white hover:border-primary'
+}">
+                       <div class="font-medium">${escapeHtml(m.label)}</div>
+                       <div class="text-xs text-slate-500 mt-0.5">${escapeHtml(m.hint)}</div>
+                     </button>`,
+          ).join('')}
+        </div>
+        <input type="hidden" id="ai-model" name="aiModel" value="${draft.aiModel}" />`,
       })}
 
       ${fieldGroup({
@@ -81,20 +111,12 @@ export function renderWorkflowPage(
     ctx.router.navigate({ type: 'home' });
   });
 
-  root.querySelectorAll<HTMLButtonElement>('[data-quantity]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const value = Number(btn.dataset.quantity);
-      const hidden = root.querySelector<HTMLInputElement>('#quantity');
-      if (hidden) hidden.value = String(value);
-      root.querySelectorAll<HTMLButtonElement>('[data-quantity]').forEach((b) => {
-        const selected = Number(b.dataset.quantity) === value;
-        b.className = `px-4 py-1.5 rounded-lg border text-sm transition ${
-          selected
-            ? 'border-primary bg-primary text-white'
-            : 'border-slate-300 bg-white hover:border-primary'
-        }`;
-      });
-    });
+  wireToggleGroup(root, '[data-quantity]', '#quantity', 'quantity', (selected) => {
+    return `px-4 py-1.5 rounded-lg border text-sm transition ${selected ? 'border-primary bg-primary text-white' : 'border-slate-300 bg-white hover:border-primary'}`;
+  });
+
+  wireToggleGroup(root, '[data-model]', '#ai-model', 'model', (selected) => {
+    return `text-left px-3 py-2 rounded-lg border text-sm transition ${selected ? 'border-primary bg-primary/5' : 'border-slate-300 bg-white hover:border-primary'}`;
   });
 
   const form = root.querySelector<HTMLFormElement>('#workflow-form');
@@ -118,7 +140,7 @@ export function renderWorkflowPage(
         instructions: data.instructions,
         quantity: data.quantity,
         includeImages: data.includeImages,
-        aiModel: 'gemini',
+        aiModel: data.aiModel,
       });
     } catch (err) {
       const message = err instanceof ValidationError ? err.message : 'Invalid input';
@@ -127,8 +149,8 @@ export function renderWorkflowPage(
       return;
     }
 
-    if (!ctx.container.apiKeys.get('gemini')) {
-      errorBox.textContent = 'Set a Gemini API key in Settings first.';
+    if (!ctx.container.apiKeys.get(workflow.aiModel)) {
+      errorBox.textContent = `Set a ${workflow.aiModel} API key in Settings first.`;
       errorBox.classList.remove('hidden');
       return;
     }
@@ -148,6 +170,27 @@ export function renderWorkflowPage(
   });
 }
 
+function wireToggleGroup(
+  root: HTMLElement,
+  buttonSelector: string,
+  hiddenSelector: string,
+  dataAttr: string,
+  classFor: (selected: boolean) => string,
+): void {
+  const buttons = root.querySelectorAll<HTMLButtonElement>(buttonSelector);
+  const hidden = root.querySelector<HTMLInputElement>(hiddenSelector);
+  const datasetKey = dataAttr;
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const value = btn.dataset[datasetKey] ?? '';
+      if (hidden) hidden.value = value;
+      buttons.forEach((b) => {
+        b.className = classFor(b.dataset[datasetKey] === value);
+      });
+    });
+  });
+}
+
 function fieldGroup(opts: { label: string; hint: string; input: string }): string {
   return `
     <div>
@@ -163,5 +206,7 @@ function readForm(root: HTMLElement): WorkflowDraft {
   const topicsRaw = root.querySelector<HTMLInputElement>('#topics')?.value ?? '';
   const instructions = root.querySelector<HTMLTextAreaElement>('#instructions')?.value ?? '';
   const quantity = Number(root.querySelector<HTMLInputElement>('#quantity')?.value ?? '50');
-  return { theme, topicsRaw, instructions, quantity, includeImages: false };
+  const aiModel =
+    (root.querySelector<HTMLInputElement>('#ai-model')?.value as AIModelId) ?? 'gemini';
+  return { theme, topicsRaw, instructions, quantity, includeImages: false, aiModel };
 }

@@ -2,7 +2,9 @@ import type { Card, ReviewResult } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
 import type { PageContext } from '../AppRouter';
 import { attachFlipBehavior, flipCardHtml } from '../components/CardFlip';
+import { openEditCardModal } from '../components/EditCardModal';
 import { appShell, escapeHtml } from '../components/Layout';
+import { openMarkIssueModal } from '../components/MarkIssueModal';
 
 export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Study): void {
   let currentStudy = study;
@@ -38,6 +40,12 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
         <button data-result="partial" class="px-3 py-2 rounded-lg bg-warning text-white text-sm font-medium hover:opacity-90 transition">Partial</button>
         <button data-result="correct" class="px-3 py-2 rounded-lg bg-success text-white text-sm font-medium hover:opacity-90 transition">Correct</button>
       </div>
+
+      <div class="flex justify-center gap-3 mt-4 text-xs text-slate-500">
+        <button id="edit-card-btn" class="hover:text-primary transition">✏️ Edit</button>
+        <span aria-hidden="true">·</span>
+        <button id="issue-card-btn" class="hover:text-danger transition">⚠️ Report issue</button>
+      </div>
       <p id="hint" class="text-center text-xs text-slate-400 mt-3">Tap or press space to flip — then rate your answer.</p>
     `,
       { back: { label: 'Home', onBackId: 'back-home' } },
@@ -62,6 +70,19 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
         actions.classList.add('opacity-40', 'pointer-events-none');
         if (hint) hint.textContent = 'Tap or press space to flip — then rate your answer.';
       }
+    });
+
+    root.querySelector('#edit-card-btn')?.addEventListener('click', () => {
+      openEditCardModal(ctx.container, currentStudy, card, (next) => {
+        currentStudy = next;
+        paint();
+      });
+    });
+
+    root.querySelector('#issue-card-btn')?.addEventListener('click', () => {
+      openMarkIssueModal(ctx.container, currentStudy, card, (next) => {
+        currentStudy = next;
+      });
     });
 
     actions.querySelectorAll<HTMLButtonElement>('[data-result]').forEach((btn) => {
