@@ -1,4 +1,7 @@
-export function appShell(content: string, opts?: { back?: { label: string; onBackId: string } }): string {
+export function appShell(
+  content: string,
+  opts?: { back?: { label: string; onBackId: string } },
+): string {
   const backBtn = opts?.back
     ? `<button id="${opts.back.onBackId}" class="text-sm text-slate-500 hover:text-slate-800 transition">← ${escapeHtml(opts.back.label)}</button>`
     : '<span></span>';

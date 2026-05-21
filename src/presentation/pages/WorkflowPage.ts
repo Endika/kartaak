@@ -1,14 +1,14 @@
+import { createWorkflow, type StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
+import { ValidationError } from '@shared/errors/AppError';
 import type { PageContext, WorkflowDraft } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
-import { createWorkflow } from '@domain/study/value-objects/StudyWorkflow';
-import { ValidationError } from '@shared/errors/AppError';
 
 const QUANTITY_OPTIONS = [10, 25, 50, 100, 200, 500];
 
 export function renderWorkflowPage(
   root: HTMLElement,
   ctx: PageContext,
-  initialDraft?: WorkflowDraft
+  initialDraft?: WorkflowDraft,
 ): void {
   const draft: WorkflowDraft = initialDraft ?? {
     theme: '',
@@ -18,7 +18,8 @@ export function renderWorkflowPage(
     includeImages: false,
   };
 
-  root.innerHTML = appShell(`
+  root.innerHTML = appShell(
+    `
     <h1 class="text-2xl font-bold mb-1">New study</h1>
     <p class="text-slate-500 mb-6">Describe what you want to learn. The AI will draft a preview before generating the full deck.</p>
 
@@ -54,7 +55,7 @@ export function renderWorkflowPage(
                          q === draft.quantity
                            ? 'border-primary bg-primary text-white'
                            : 'border-slate-300 bg-white hover:border-primary'
-                       }">${q}</button>`
+}">${q}</button>`,
           ).join('')}
         </div>
         <input type="hidden" id="quantity" name="quantity" value="${draft.quantity}" />`,
@@ -69,7 +70,9 @@ export function renderWorkflowPage(
         </button>
       </div>
     </form>
-  `, { back: { label: 'Back', onBackId: 'back-btn' } });
+  `,
+    { back: { label: 'Back', onBackId: 'back-btn' } },
+  );
 
   root.querySelector('#back-btn')?.addEventListener('click', () => {
     ctx.router.navigate({ type: 'home' });
@@ -104,11 +107,14 @@ export function renderWorkflowPage(
     errorBox.classList.add('hidden');
 
     const data = readForm(root);
-    let workflow;
+    let workflow: StudyWorkflow;
     try {
       workflow = createWorkflow({
         theme: data.theme,
-        topics: data.topicsRaw.split(',').map((t) => t.trim()).filter(Boolean),
+        topics: data.topicsRaw
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean),
         instructions: data.instructions,
         quantity: data.quantity,
         includeImages: data.includeImages,

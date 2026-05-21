@@ -1,13 +1,15 @@
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 
 export function buildCardPrompt(workflow: StudyWorkflow, count: number): string {
-  const topics = workflow.topics.length > 0
-    ? `Subtopics: ${workflow.topics.join(', ')}`
-    : 'Subtopics: (none specified — infer reasonable scope from the theme).';
+  const topics =
+    workflow.topics.length > 0
+      ? `Subtopics: ${workflow.topics.join(', ')}`
+      : 'Subtopics: (none specified — infer reasonable scope from the theme).';
 
-  const instructions = workflow.instructions.trim().length > 0
-    ? workflow.instructions.trim()
-    : 'No specific format requested — use a clear question/prompt on the front and a concise answer on the back, matched to the theme.';
+  const instructions =
+    workflow.instructions.trim().length > 0
+      ? workflow.instructions.trim()
+      : 'No specific format requested — use a clear question/prompt on the front and a concise answer on the back, matched to the theme.';
 
   const imageGuidance = workflow.includeImages
     ? 'If a public image would clearly aid recall (flags, paintings, anatomy), include an "imageUrl" pointing to a stable Wikimedia Commons or Wikipedia URL. Otherwise omit the field.'

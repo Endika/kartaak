@@ -1,7 +1,7 @@
-import { newId } from '@shared/utils/ids';
 import { type ISODate, nowIso } from '@shared/utils/clock';
-import type { Card } from './Card';
+import { newId } from '@shared/utils/ids';
 import { type StudyWorkflow, workflowDisplayName } from '../value-objects/StudyWorkflow';
+import type { Card } from './Card';
 
 export interface Study {
   id: string;

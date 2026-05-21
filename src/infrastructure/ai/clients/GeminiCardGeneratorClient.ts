@@ -1,8 +1,8 @@
-import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type {
   GeneratedCard,
   ICardGeneratorService,
 } from '@domain/ai-generation/services/ICardGeneratorService';
+import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { AIGenerationError } from '@shared/errors/AppError';
 import { buildCardPrompt } from './prompts/cardPrompt';

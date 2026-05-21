@@ -1,4 +1,4 @@
-@import './card-flip.css';
+@import "./card-flip.css";
 
 @tailwind base;
 @tailwind components;
@@ -11,6 +11,6 @@
   }
 
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
   }
 }

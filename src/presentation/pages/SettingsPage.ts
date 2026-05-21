@@ -5,7 +5,8 @@ export function renderSettingsPage(root: HTMLElement, ctx: PageContext): void {
   const currentKey = ctx.container.apiKeys.get('gemini') ?? '';
   const masked = currentKey ? `${currentKey.slice(0, 6)}••••••${currentKey.slice(-4)}` : '';
 
-  root.innerHTML = appShell(`
+  root.innerHTML = appShell(
+    `
     <h1 class="text-2xl font-bold mb-6">Settings</h1>
 
     <section class="rounded-xl border border-slate-200 bg-white p-5 mb-5">
@@ -23,7 +24,9 @@ export function renderSettingsPage(root: HTMLElement, ctx: PageContext): void {
       </div>
       <p id="save-status" class="text-xs mt-2 text-slate-500"></p>
     </section>
-  `, { back: { label: 'Back', onBackId: 'back-btn' } });
+  `,
+    { back: { label: 'Back', onBackId: 'back-btn' } },
+  );
 
   root.querySelector('#back-btn')?.addEventListener('click', () => {
     ctx.router.navigate({ type: 'home' });

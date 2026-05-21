@@ -1,8 +1,8 @@
-import type { PageContext } from '../AppRouter';
-import { appShell, escapeHtml } from '../components/Layout';
-import { flipCardHtml, attachFlipBehavior } from '../components/CardFlip';
-import type { Study } from '@domain/study/entities/Study';
 import type { Card, ReviewResult } from '@domain/study/entities/Card';
+import type { Study } from '@domain/study/entities/Study';
+import type { PageContext } from '../AppRouter';
+import { attachFlipBehavior, flipCardHtml } from '../components/CardFlip';
+import { appShell, escapeHtml } from '../components/Layout';
 
 export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Study): void {
   let currentStudy = study;
@@ -22,7 +22,8 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
     const learned = currentStudy.cards.filter((c) => c.status === 'learned').length;
     const total = currentStudy.cards.length;
 
-    root.innerHTML = appShell(`
+    root.innerHTML = appShell(
+      `
       <div class="mb-5 flex items-center justify-between text-sm text-slate-500">
         <span>${escapeHtml(currentStudy.name)}</span>
         <span>${index + 1} / ${total} · ${learned} learned</span>
@@ -38,7 +39,9 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
         <button data-result="correct" class="px-3 py-2 rounded-lg bg-success text-white text-sm font-medium hover:opacity-90 transition">Correct</button>
       </div>
       <p id="hint" class="text-center text-xs text-slate-400 mt-3">Tap or press space to flip — then rate your answer.</p>
-    `, { back: { label: 'Home', onBackId: 'back-home' } });
+    `,
+      { back: { label: 'Home', onBackId: 'back-home' } },
+    );
 
     root.querySelector('#back-home')?.addEventListener('click', () => {
       ctx.router.navigate({ type: 'home' });
@@ -65,15 +68,20 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
       btn.addEventListener('click', async () => {
         if (!flipped) return;
         const result = btn.dataset.result as ReviewResult;
-        actions.querySelectorAll('button').forEach((b) => (b.disabled = true));
+        actions.querySelectorAll('button').forEach((b) => {
+          b.disabled = true;
+        });
         try {
           const updated = await ctx.container.reviewCard.execute(currentStudy.id, card.id, result);
           currentStudy = updated;
           index += 1;
           paint();
         } catch (err) {
-          actions.querySelectorAll('button').forEach((b) => (b.disabled = false));
-          if (hint) hint.textContent = err instanceof Error ? err.message : 'Could not save review.';
+          actions.querySelectorAll('button').forEach((b) => {
+            b.disabled = false;
+          });
+          if (hint)
+            hint.textContent = err instanceof Error ? err.message : 'Could not save review.';
         }
       });
     });
@@ -82,7 +90,8 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
   function paintComplete(): void {
     const total = currentStudy.cards.length;
     const learned = currentStudy.cards.filter((c) => c.status === 'learned').length;
-    root.innerHTML = appShell(`
+    root.innerHTML = appShell(
+      `
       <div class="rounded-xl border border-slate-200 bg-white p-8 text-center">
         <h1 class="text-2xl font-bold mb-2">Session complete</h1>
         <p class="text-slate-500 mb-6">You went through all ${total} cards · ${learned} learned.</p>
@@ -91,7 +100,9 @@ export function renderStudyPage(root: HTMLElement, ctx: PageContext, study: Stud
           <button id="back-home-end" class="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition">Back to studies</button>
         </div>
       </div>
-    `, { back: { label: 'Home', onBackId: 'back-home' } });
+    `,
+      { back: { label: 'Home', onBackId: 'back-home' } },
+    );
 
     root.querySelector('#back-home')?.addEventListener('click', () => {
       ctx.router.navigate({ type: 'home' });

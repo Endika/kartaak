@@ -1,9 +1,9 @@
+import { createWorkflow } from '@domain/study/value-objects/StudyWorkflow';
+import { InMemoryStudyRepository } from '@infrastructure/persistence/InMemoryStudyRepository';
 import { describe, expect, it } from 'vitest';
 import { GenerateCardPreviewUseCase } from '../GenerateCardPreviewUseCase';
 import { GenerateFullStudyUseCase } from '../GenerateFullStudyUseCase';
 import { ReviewCardUseCase } from '../ReviewCardUseCase';
-import { createWorkflow } from '@domain/study/value-objects/StudyWorkflow';
-import { InMemoryStudyRepository } from '@infrastructure/persistence/InMemoryStudyRepository';
 import { FakeCardGenerator } from './fakes';
 
 describe('study generation + review flow', () => {

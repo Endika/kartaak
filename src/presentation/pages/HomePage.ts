@@ -1,6 +1,6 @@
+import type { Study } from '@domain/study/entities/Study';
 import type { PageContext } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
-import type { Study } from '@domain/study/entities/Study';
 
 export async function renderHomePage(root: HTMLElement, ctx: PageContext): Promise<void> {
   const studies = await ctx.container.studies.findAll();
@@ -13,14 +13,15 @@ export async function renderHomePage(root: HTMLElement, ctx: PageContext): Promi
          <button id="goto-settings" class="ml-2 underline font-medium">Open settings</button>
        </div>`;
 
-  const studiesHtml = studies.length === 0
-    ? `<div class="rounded-xl border-2 border-dashed border-slate-300 p-10 text-center text-slate-500">
+  const studiesHtml =
+    studies.length === 0
+      ? `<div class="rounded-xl border-2 border-dashed border-slate-300 p-10 text-center text-slate-500">
          <p class="mb-4">No studies yet.</p>
          <button id="create-first" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition">
            Create your first study
          </button>
        </div>`
-    : `<ul class="space-y-3">${studies.map(studyCard).join('')}</ul>`;
+      : `<ul class="space-y-3">${studies.map(studyCard).join('')}</ul>`;
 
   root.innerHTML = appShell(`
     <div class="flex items-center justify-between mb-6">

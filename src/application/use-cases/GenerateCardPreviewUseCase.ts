@@ -1,8 +1,8 @@
+import type { ICardGeneratorService } from '@domain/ai-generation/services/ICardGeneratorService';
 import type { Card } from '@domain/study/entities/Card';
 import { createCard } from '@domain/study/entities/Card';
-import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
-import type { ICardGeneratorService } from '@domain/ai-generation/services/ICardGeneratorService';
 import { dedupeCards } from '@domain/study/services/cardDeduplication';
+import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 
 const PREVIEW_SAMPLE_SIZE = 4;
 

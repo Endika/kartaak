@@ -1,13 +1,13 @@
-import type { PageContext } from '../AppRouter';
-import { appShell, escapeHtml } from '../components/Layout';
 import type { Card } from '@domain/study/entities/Card';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
+import type { PageContext } from '../AppRouter';
+import { appShell, escapeHtml } from '../components/Layout';
 
 export function renderPreviewPage(
   root: HTMLElement,
   ctx: PageContext,
   workflow: StudyWorkflow,
-  previewCards: Card[]
+  previewCards: Card[],
 ): void {
   const summary = `
     <span class="font-medium">${escapeHtml(workflow.theme)}</span>
@@ -15,7 +15,8 @@ export function renderPreviewPage(
     · ${workflow.quantity} cards · model: ${workflow.aiModel}
   `;
 
-  root.innerHTML = appShell(`
+  root.innerHTML = appShell(
+    `
     <h1 class="text-2xl font-bold mb-1">Preview</h1>
     <p class="text-sm text-slate-500 mb-1">${previewCards.length} sample cards from the model.</p>
     <p class="text-xs text-slate-400 mb-6">${summary}</p>
@@ -35,7 +36,9 @@ export function renderPreviewPage(
         </button>
       </div>
     </div>
-  `, { back: { label: 'Home', onBackId: 'back-home' } });
+  `,
+    { back: { label: 'Home', onBackId: 'back-home' } },
+  );
 
   const errorBox = root.querySelector<HTMLElement>('#generate-error');
   const generateBtn = root.querySelector<HTMLButtonElement>('#generate-all');

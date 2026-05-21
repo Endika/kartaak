@@ -38,12 +38,12 @@
 }
 
 .flip-card-front {
-  background: linear-gradient(135deg, #0066FF 0%, #6366F1 100%);
+  background: linear-gradient(135deg, #0066ff 0%, #6366f1 100%);
   color: white;
 }
 
 .flip-card-back {
-  background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
   color: white;
   transform: rotateY(180deg);
 }

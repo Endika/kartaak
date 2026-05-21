@@ -1,12 +1,12 @@
+import type { Container } from '@bootstrap/Container';
 import type { Card } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
-import type { Container } from '@bootstrap/Container';
 import { renderHomePage } from './pages/HomePage';
-import { renderSettingsPage } from './pages/SettingsPage';
-import { renderWorkflowPage } from './pages/WorkflowPage';
 import { renderPreviewPage } from './pages/PreviewPage';
+import { renderSettingsPage } from './pages/SettingsPage';
 import { renderStudyPage } from './pages/StudyPage';
+import { renderWorkflowPage } from './pages/WorkflowPage';
 
 export type View =
   | { type: 'home' }
@@ -28,7 +28,7 @@ export class AppRouter {
 
   constructor(
     private readonly root: HTMLElement,
-    private readonly container: Container
+    private readonly container: Container,
   ) {}
 
   start(): void {

@@ -1,5 +1,5 @@
-import { Container } from './Container';
 import { AppRouter } from '@presentation/AppRouter';
+import { Container } from './Container';
 import { registerServiceWorker } from './registerServiceWorker';
 
 export function mountApp(root: HTMLElement): void {

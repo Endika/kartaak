@@ -1,9 +1,9 @@
+import type { ICardGeneratorService } from '@domain/ai-generation/services/ICardGeneratorService';
 import { createCard } from '@domain/study/entities/Card';
 import { createStudy, type Study } from '@domain/study/entities/Study';
-import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
-import type { ICardGeneratorService } from '@domain/ai-generation/services/ICardGeneratorService';
 import type { IStudyRepository } from '@domain/study/repositories/IStudyRepository';
 import { dedupeCards } from '@domain/study/services/cardDeduplication';
+import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import { AIGenerationError } from '@shared/errors/AppError';
 
 export interface GenerateFullStudyResult {
@@ -14,7 +14,7 @@ export interface GenerateFullStudyResult {
 export class GenerateFullStudyUseCase {
   constructor(
     private readonly generator: ICardGeneratorService,
-    private readonly studies: IStudyRepository
+    private readonly studies: IStudyRepository,
   ) {}
 
   async execute(workflow: StudyWorkflow): Promise<GenerateFullStudyResult> {

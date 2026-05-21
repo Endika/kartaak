@@ -27,7 +27,11 @@ export function createWorkflow(input: {
   if (theme.length < MIN_THEME_LENGTH) {
     throw new ValidationError(`Theme must be at least ${MIN_THEME_LENGTH} characters`);
   }
-  if (!Number.isFinite(input.quantity) || input.quantity < MIN_QUANTITY || input.quantity > MAX_QUANTITY) {
+  if (
+    !Number.isFinite(input.quantity) ||
+    input.quantity < MIN_QUANTITY ||
+    input.quantity > MAX_QUANTITY
+  ) {
     throw new ValidationError(`Quantity must be between ${MIN_QUANTITY} and ${MAX_QUANTITY}`);
   }
   return {

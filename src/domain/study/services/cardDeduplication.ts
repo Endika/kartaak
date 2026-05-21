@@ -15,7 +15,7 @@ function fingerprint(card: Pick<Card, 'front' | 'back'>): string {
 
 export function dedupeCards(
   candidates: readonly Card[],
-  existing: readonly Card[] = []
+  existing: readonly Card[] = [],
 ): DedupeOutcome {
   const seen = new Set<string>(existing.map(fingerprint));
   const unique: Card[] = [];

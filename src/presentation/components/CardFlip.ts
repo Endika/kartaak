@@ -20,7 +20,7 @@ export function flipCardHtml(front: string, back: string, opts?: { id?: string }
 
 export function attachFlipBehavior(
   cardEl: HTMLElement,
-  onFlip?: (flipped: boolean) => void
+  onFlip?: (flipped: boolean) => void,
 ): () => void {
   let flipped = false;
   const toggle = () => {

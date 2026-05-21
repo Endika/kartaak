@@ -33,9 +33,7 @@ export class IndexedDBStudyRepository implements IStudyRepository {
 
   async findById(id: string): Promise<Study | null> {
     const db = await this.openDb();
-    return runTransaction(db, 'readonly', (store) =>
-      store.get(id)
-    ) as Promise<Study | null>;
+    return runTransaction(db, 'readonly', (store) => store.get(id)) as Promise<Study | null>;
   }
 
   async findAll(): Promise<Study[]> {
@@ -53,7 +51,7 @@ export class IndexedDBStudyRepository implements IStudyRepository {
 function runTransaction<T>(
   db: IDBDatabase,
   mode: IDBTransactionMode,
-  operation: (store: IDBObjectStore) => IDBRequest<T> | IDBRequest<undefined>
+  operation: (store: IDBObjectStore) => IDBRequest<T> | IDBRequest<undefined>,
 ): Promise<T | null> {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE, mode);
