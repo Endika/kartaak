@@ -9,6 +9,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/Endika/kartaak/ci.yml?style=flat-square&label=ci&branch=main)](https://github.com/Endika/kartaak/actions/workflows/ci.yml)
 [![Last commit](https://img.shields.io/github/last-commit/Endika/kartaak?style=flat-square)](https://github.com/Endika/kartaak/commits/main)
 [![Code style: Biome](https://img.shields.io/badge/code_style-biome-60A5FA?style=flat-square)](https://biomejs.dev)
+[![License: MIT](https://img.shields.io/github/license/Endika/kartaak?style=flat-square&color=10B981)](./LICENSE)
 
 Flashcard study app with AI-generated cards. Offline-first PWA — you study locally, the AI only runs when you ask it to generate or refine cards.
 
