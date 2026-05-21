@@ -5,6 +5,7 @@ import { GenerateCardPreviewUseCase } from '@application/use-cases/GenerateCardP
 import { GenerateFullStudyUseCase } from '@application/use-cases/GenerateFullStudyUseCase';
 import { ImportStudyUseCase } from '@application/use-cases/ImportStudyUseCase';
 import { MarkCardIssueUseCase } from '@application/use-cases/MarkCardIssueUseCase';
+import { RenameStudyUseCase } from '@application/use-cases/RenameStudyUseCase';
 import { ReviewCardUseCase } from '@application/use-cases/ReviewCardUseCase';
 import { UpdateIssueStatusUseCase } from '@application/use-cases/UpdateIssueStatusUseCase';
 import { CardGeneratorRouter } from '@infrastructure/ai/CardGeneratorRouter';
@@ -30,6 +31,7 @@ export class Container {
   readonly markCardIssue = new MarkCardIssueUseCase(this.studies);
   readonly updateIssueStatus = new UpdateIssueStatusUseCase(this.studies);
   readonly deleteStudy = new DeleteStudyUseCase(this.studies);
+  readonly renameStudy = new RenameStudyUseCase(this.studies);
   readonly exportStudy = new ExportStudyUseCase(this.studies);
   readonly importStudy = new ImportStudyUseCase(this.studies);
 }

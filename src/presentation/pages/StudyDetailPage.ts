@@ -34,7 +34,10 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
   root.innerHTML = appShell(
     `
     <header class="mb-6">
-      <h1 class="text-2xl font-bold mb-1">${escapeHtml(study.name)}</h1>
+      <div class="flex items-start justify-between gap-3 mb-1">
+        <h1 class="text-2xl font-bold">${escapeHtml(study.name)}</h1>
+        <button id="rename-btn" class="text-sm text-slate-400 hover:text-primary transition shrink-0" aria-label="Rename study">✏️ Rename</button>
+      </div>
       <p class="text-sm text-slate-500">
         ${escapeHtml(study.workflow.theme)}
         ${study.workflow.topics.length > 0 ? ` · ${escapeHtml(study.workflow.topics.join(', '))}` : ''}
@@ -73,6 +76,10 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
 
   root.querySelector('#action-study')?.addEventListener('click', () => {
     ctx.router.navigate({ type: 'study', study });
+  });
+
+  root.querySelector('#rename-btn')?.addEventListener('click', () => {
+    openRenameModal(ctx, study, (next) => paint(root, ctx, next));
   });
 
   root.querySelector('#action-export')?.addEventListener('click', () => {
@@ -205,6 +212,31 @@ function exportStudy(ctx: PageContext, study: Study): Promise<void> {
     a.remove();
     URL.revokeObjectURL(url);
   });
+}
+
+function openRenameModal(ctx: PageContext, study: Study, onRenamed: (study: Study) => void): void {
+  const modal = openModal(
+    {
+      title: 'Rename study',
+      primaryLabel: 'Save',
+      bodyHtml: `
+        <input data-rename-input type="text" value="${escapeHtml(study.name)}"
+               class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-primary focus:outline-none text-sm" />
+      `,
+    },
+    async () => {
+      const value = modal.root.querySelector<HTMLInputElement>('[data-rename-input]')?.value ?? '';
+      modal.setBusy(true, 'Saving…');
+      try {
+        const next = await ctx.container.renameStudy.execute(study.id, value);
+        modal.close();
+        onRenamed(next);
+      } catch (err) {
+        modal.setBusy(false);
+        throw err;
+      }
+    },
+  );
 }
 
 function confirmDelete(ctx: PageContext, study: Study): void {
