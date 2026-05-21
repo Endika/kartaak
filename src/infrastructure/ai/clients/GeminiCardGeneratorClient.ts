@@ -7,7 +7,7 @@ import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { AIGenerationError } from '@shared/errors/AppError';
 import { buildCardPrompt } from './prompts/cardPrompt';
 
-const GEMINI_MODEL = 'gemini-1.5-flash-latest';
+const GEMINI_MODEL = 'gemini-2.5-flash';
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 interface GeminiResponse {
