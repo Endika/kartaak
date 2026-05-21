@@ -5,6 +5,7 @@ import type { PageContext } from '../AppRouter';
 import { openEditCardModal } from '../components/EditCardModal';
 import { appShell, escapeHtml } from '../components/Layout';
 import { openModal } from '../components/Modal';
+import { openResolveIssueModal } from '../components/ResolveIssueModal';
 
 export async function renderStudyDetailPage(
   root: HTMLElement,
@@ -103,6 +104,9 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
 
   for (const card of study.cards) {
     for (const issue of card.issues ?? []) {
+      root.querySelector(`[data-issue-ai="${issue.id}"]`)?.addEventListener('click', () => {
+        openResolveIssueModal(ctx.container, study, card, issue, (next) => paint(root, ctx, next));
+      });
       root
         .querySelector(`[data-issue-resolve="${issue.id}"]`)
         ?.addEventListener('click', async () => {
@@ -187,7 +191,8 @@ function renderIssuesSection(study: Study): string {
           <div class="text-xs uppercase tracking-wide text-amber-700 mb-1">${escapeHtml(issue.type)}</div>
           <div class="text-sm text-slate-900 mb-1">${escapeHtml(card.front)}</div>
           ${issue.description ? `<div class="text-xs text-slate-600 mb-2">${escapeHtml(issue.description)}</div>` : ''}
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
+            <button data-issue-ai="${issue.id}" data-card-id="${card.id}" class="text-xs px-2.5 py-1 rounded bg-primary text-white hover:opacity-90 transition">🤖 Resolve with AI</button>
             <button data-issue-resolve="${issue.id}" class="text-xs px-2.5 py-1 rounded bg-success text-white hover:opacity-90 transition">Mark resolved</button>
             <button data-issue-dismiss="${issue.id}" class="text-xs px-2.5 py-1 rounded border border-slate-300 hover:bg-slate-100 transition">Dismiss</button>
           </div>
