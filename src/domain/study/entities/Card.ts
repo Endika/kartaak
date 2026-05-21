@@ -1,5 +1,6 @@
 import { addDaysIso, type ISODate, nowIso } from '@shared/utils/clock';
 import { newId } from '@shared/utils/ids';
+import type { CardIssue } from './CardIssue';
 
 export type CardStatus = 'new' | 'learning' | 'learned';
 export type ReviewResult = 'correct' | 'partial' | 'incorrect';
@@ -15,6 +16,7 @@ export interface Card {
   lastReviewedAt: ISODate | null;
   nextReviewAt: ISODate | null;
   isEdited: boolean;
+  issues?: CardIssue[];
   createdAt: ISODate;
 }
 
@@ -31,8 +33,24 @@ export function createCard(input: { front: string; back: string; imageUrl?: stri
     lastReviewedAt: null,
     nextReviewAt: null,
     isEdited: false,
+    issues: [],
     createdAt: now,
   };
+}
+
+export function attachIssue(card: Card, issue: CardIssue): Card {
+  return { ...card, issues: [...(card.issues ?? []), issue] };
+}
+
+export function updateIssueInCard(card: Card, updated: CardIssue): Card {
+  return {
+    ...card,
+    issues: (card.issues ?? []).map((i) => (i.id === updated.id ? updated : i)),
+  };
+}
+
+export function pendingIssueCount(card: Card): number {
+  return (card.issues ?? []).filter((i) => i.status === 'pending').length;
 }
 
 const INTERVAL_DAYS_BY_STATUS: Record<CardStatus, number> = {
