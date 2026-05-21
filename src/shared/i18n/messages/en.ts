@@ -142,6 +142,15 @@ export const en: Record<string, string> = {
   'study.complete.restart': 'Review again',
   'study.complete.backHome': 'Back to studies',
   'study.reviewFailed': 'Could not save review.',
+  'study.caughtUp.title': "You're all caught up",
+  'study.caughtUp.summary':
+    'No cards are due right now. Come back tomorrow to keep the streak going — or force a review of everything.',
+  'study.caughtUp.force': 'Force review',
+  'study.caughtUp.backHome': 'Back to studies',
+  'settings.session.heading': 'Study session',
+  'settings.session.hint': 'How many cards to show per session.',
+  'settings.session.option': '{count} cards',
+  'settings.session.all': 'All due cards',
 
   // StudyDetailPage
   'studyDetail.notFound': 'Study not found.',

@@ -147,6 +147,15 @@ export const eu: Record<string, string> = {
   'study.complete.restart': 'Berrikusi berriro',
   'study.complete.backHome': 'Itzuli ikasketetara',
   'study.reviewFailed': 'Ezin izan da erantzuna gorde.',
+  'study.caughtUp.title': 'Dena egunean duzu',
+  'study.caughtUp.summary':
+    'Ez dago orain berrikusi beharreko txartelik. Itzuli bihar katea mantentzeko — edo behartu denaren berrikuspena.',
+  'study.caughtUp.force': 'Behartu berrikuspena',
+  'study.caughtUp.backHome': 'Itzuli ikasketetara',
+  'settings.session.heading': 'Ikasketa-saioa',
+  'settings.session.hint': 'Saio bakoitzeko zenbat txartel erakutsi.',
+  'settings.session.option': '{count} txartel',
+  'settings.session.all': 'Egokitzen diren guztiak',
 
   // StudyDetailPage
   'studyDetail.notFound': 'Ikasketa ez da aurkitu.',

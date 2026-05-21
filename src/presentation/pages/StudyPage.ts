@@ -3,8 +3,14 @@ import type { MarkCardIssueUseCase } from '@application/use-cases/MarkCardIssueU
 import type { ReviewCardUseCase } from '@application/use-cases/ReviewCardUseCase';
 import type { Card, ReviewResult } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
+import { selectStudySession } from '@domain/study/services/studyScheduler';
 import type { ISoundPlayer } from '@infrastructure/audio/SoundPlayer';
+import {
+  type ISessionPreferenceStorage,
+  sessionSizeToLimit,
+} from '@infrastructure/session/SessionPreferenceStorage';
 import type { I18n } from '@shared/i18n';
+import { nowIso } from '@shared/utils/clock';
 import type { PageContext } from '../AppRouter';
 import { attachFlipBehavior, flipCardHtml } from '../components/CardFlip';
 import { openEditCardModal } from '../components/EditCardModal';
@@ -17,6 +23,7 @@ export interface StudyPageDeps {
   markCardIssue: MarkCardIssueUseCase;
   i18n: I18n;
   sounds: ISoundPlayer;
+  sessionPreference: ISessionPreferenceStorage;
 }
 
 type Ctx = PageContext<StudyPageDeps>;
@@ -24,11 +31,28 @@ type Ctx = PageContext<StudyPageDeps>;
 export function renderStudyPage(root: HTMLElement, ctx: Ctx, study: Study): void {
   const { i18n } = ctx.deps;
   let currentStudy = study;
+  let queue: Card[] = [];
   let index = 0;
   let flipped = false;
 
+  function startSession(force = false): void {
+    const limit = sessionSizeToLimit(ctx.deps.sessionPreference.load());
+    const { cards, allCaughtUp } = selectStudySession(currentStudy, {
+      now: nowIso(),
+      ...(limit !== undefined ? { limit } : {}),
+      force,
+    });
+    queue = cards;
+    index = 0;
+    if (cards.length === 0 && allCaughtUp) {
+      paintCaughtUp();
+      return;
+    }
+    paint();
+  }
+
   function paint(): void {
-    const card = currentStudy.cards[index];
+    const card = queue[index];
     if (!card) {
       paintComplete();
       return;
@@ -37,8 +61,8 @@ export function renderStudyPage(root: HTMLElement, ctx: Ctx, study: Study): void
   }
 
   function paintCard(card: Card): void {
+    const total = queue.length;
     const learned = currentStudy.cards.filter((c) => c.status === 'learned').length;
-    const total = currentStudy.cards.length;
 
     root.innerHTML = appShell(
       `
@@ -91,6 +115,11 @@ export function renderStudyPage(root: HTMLElement, ctx: Ctx, study: Study): void
     root.querySelector('#edit-card-btn')?.addEventListener('click', () => {
       openEditCardModal({ editCard: ctx.deps.editCard, i18n }, currentStudy, card, (next) => {
         currentStudy = next;
+        const slot = queue[index];
+        if (slot) {
+          const updated = next.cards.find((c) => c.id === slot.id);
+          if (updated) queue[index] = updated;
+        }
         paint();
       });
     });
@@ -131,7 +160,7 @@ export function renderStudyPage(root: HTMLElement, ctx: Ctx, study: Study): void
   }
 
   function paintComplete(): void {
-    const total = currentStudy.cards.length;
+    const total = queue.length;
     const learned = currentStudy.cards.filter((c) => c.status === 'learned').length;
     root.innerHTML = appShell(
       `
@@ -154,12 +183,37 @@ export function renderStudyPage(root: HTMLElement, ctx: Ctx, study: Study): void
       ctx.router.navigate({ type: 'home' });
     });
     root.querySelector('#restart')?.addEventListener('click', () => {
-      index = 0;
-      paint();
+      startSession();
     });
   }
 
-  paint();
+  function paintCaughtUp(): void {
+    root.innerHTML = appShell(
+      `
+      <div class="rounded-xl border border-slate-200 bg-white p-8 text-center">
+        <h1 class="text-2xl font-bold mb-2">${i18n.t('study.caughtUp.title')}</h1>
+        <p class="text-slate-500 mb-6">${i18n.t('study.caughtUp.summary')}</p>
+        <div class="flex justify-center gap-2 flex-wrap">
+          <button id="force-review" class="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 transition">${i18n.t('study.caughtUp.force')}</button>
+          <button id="back-home-end" class="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition">${i18n.t('study.caughtUp.backHome')}</button>
+        </div>
+      </div>
+    `,
+      { back: { label: i18n.t('study.back'), onBackId: 'back-home' } },
+    );
+
+    root.querySelector('#back-home')?.addEventListener('click', () => {
+      ctx.router.navigate({ type: 'home' });
+    });
+    root.querySelector('#back-home-end')?.addEventListener('click', () => {
+      ctx.router.navigate({ type: 'home' });
+    });
+    root.querySelector('#force-review')?.addEventListener('click', () => {
+      startSession(true);
+    });
+  }
+
+  startSession();
 }
 
 function playReviewSound(sounds: ISoundPlayer, result: ReviewResult): void {

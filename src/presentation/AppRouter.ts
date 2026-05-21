@@ -70,7 +70,12 @@ export class AppRouter {
       case 'settings':
         renderSettingsPage(this.root, {
           router: this,
-          deps: { apiKeys: c.apiKeys, i18n: c.i18n, sounds: c.sounds },
+          deps: {
+            apiKeys: c.apiKeys,
+            i18n: c.i18n,
+            sounds: c.sounds,
+            sessionPreference: c.sessionPreference,
+          },
         });
         return;
       case 'create-workflow':
@@ -109,6 +114,7 @@ export class AppRouter {
               markCardIssue: c.markCardIssue,
               i18n: c.i18n,
               sounds: c.sounds,
+              sessionPreference: c.sessionPreference,
             },
           },
           this.view.study,

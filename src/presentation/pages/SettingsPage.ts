@@ -1,5 +1,10 @@
 import type { AIModelId } from '@domain/study/value-objects/StudyWorkflow';
 import type { ISoundPlayer } from '@infrastructure/audio/SoundPlayer';
+import {
+  type ISessionPreferenceStorage,
+  SESSION_SIZE_OPTIONS,
+  type SessionSize,
+} from '@infrastructure/session/SessionPreferenceStorage';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { type I18n, isLocale, LOCALE_LABELS, LOCALES } from '@shared/i18n';
 import type { PageContext } from '../AppRouter';
@@ -9,6 +14,7 @@ export interface SettingsPageDeps {
   apiKeys: IApiKeyStorage;
   i18n: I18n;
   sounds: ISoundPlayer;
+  sessionPreference: ISessionPreferenceStorage;
 }
 
 type Ctx = PageContext<SettingsPageDeps>;
@@ -67,6 +73,7 @@ export function renderSettingsPage(root: HTMLElement, ctx: Ctx): void {
     `
     <h1 class="text-2xl font-bold mb-6">${i18n.t('settings.title')}</h1>
     ${renderLanguageSection(i18n)}
+    ${renderSessionSection(i18n, ctx.deps.sessionPreference.load())}
     ${renderSoundsSection(i18n, ctx.deps.sounds.isEnabled())}
     ${PROVIDERS.map((p) => renderProviderSection(ctx, p)).join('')}
   `,
@@ -78,11 +85,46 @@ export function renderSettingsPage(root: HTMLElement, ctx: Ctx): void {
   });
 
   wireLanguageSelector(root, i18n);
+  wireSessionSelector(root, ctx.deps.sessionPreference);
   wireSoundsToggle(root, ctx.deps.sounds);
 
   for (const provider of PROVIDERS) {
     wireProvider(root, ctx, provider);
   }
+}
+
+function renderSessionSection(i18n: I18n, current: SessionSize): string {
+  const options = SESSION_SIZE_OPTIONS.map((size) => {
+    const label =
+      size === 'all'
+        ? i18n.t('settings.session.all')
+        : i18n.t('settings.session.option', { count: size });
+    return `<option value="${size}" ${size === current ? 'selected' : ''}>${escapeHtml(label)}</option>`;
+  }).join('');
+  return `
+    <section class="rounded-xl border border-slate-200 bg-white p-5 mb-5">
+      <h2 class="font-semibold mb-1">${i18n.t('settings.session.heading')}</h2>
+      <p class="text-sm text-slate-500 mb-3">${i18n.t('settings.session.hint')}</p>
+      <select id="session-size" class="px-3 py-2 rounded-lg border border-slate-300 focus:border-primary focus:outline-none text-sm bg-white">
+        ${options}
+      </select>
+    </section>
+  `;
+}
+
+function wireSessionSelector(root: HTMLElement, pref: ISessionPreferenceStorage): void {
+  const select = root.querySelector<HTMLSelectElement>('#session-size');
+  select?.addEventListener('change', () => {
+    const raw = select.value;
+    if (raw === 'all') {
+      pref.save('all');
+      return;
+    }
+    const parsed = Number(raw);
+    if (parsed === 5 || parsed === 10 || parsed === 20 || parsed === 50 || parsed === 100) {
+      pref.save(parsed);
+    }
+  });
 }
 
 function renderSoundsSection(i18n: I18n, enabled: boolean): string {

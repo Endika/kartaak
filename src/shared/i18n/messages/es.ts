@@ -143,6 +143,15 @@ export const es: Record<string, string> = {
   'study.complete.restart': 'Repasar otra vez',
   'study.complete.backHome': 'Volver a los estudios',
   'study.reviewFailed': 'No se pudo guardar la respuesta.',
+  'study.caughtUp.title': 'Lo tienes todo al día',
+  'study.caughtUp.summary':
+    'No hay tarjetas que repasar ahora mismo. Vuelve mañana para mantener la racha — o fuerza un repaso de todo.',
+  'study.caughtUp.force': 'Forzar repaso',
+  'study.caughtUp.backHome': 'Volver a los estudios',
+  'settings.session.heading': 'Sesión de estudio',
+  'settings.session.hint': 'Cuántas tarjetas mostrar por sesión.',
+  'settings.session.option': '{count} tarjetas',
+  'settings.session.all': 'Todas las que toquen',
 
   // StudyDetailPage
   'studyDetail.notFound': 'Estudio no encontrado.',
