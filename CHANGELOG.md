@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.12](https://github.com/Endika/kartaak/compare/v0.0.11...v0.0.12) (2026-05-21)
+
+
+### Features
+
+* **dedupe:** prevent and remove duplicate cards ([6a5723e](https://github.com/Endika/kartaak/commit/6a5723e4ae3f7e8ba26c9435f89afa81586ae649))
+
 ## [0.0.11](https://github.com/Endika/kartaak/compare/v0.0.10...v0.0.11) (2026-05-21)
 
 
