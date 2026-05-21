@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/Endika/kartaak/compare/v0.0.2...v0.0.3) (2026-05-21)
+
+
+### Documentation
+
+* add status badges to readme header ([d9dac88](https://github.com/Endika/kartaak/commit/d9dac887b8ab2da50099a248f299c116e0086570))
+
 ## [0.0.2](https://github.com/Endika/kartaak/compare/v0.0.1...v0.0.2) (2026-05-21)
 
 
