@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/Endika/kartaak/compare/v0.0.3...v0.0.4) (2026-05-21)
+
+
+### Documentation
+
+* add MIT license ([f9ab500](https://github.com/Endika/kartaak/commit/f9ab500f3221a3b465507f7cba6881862545fa98))
+
 ## [0.0.3](https://github.com/Endika/kartaak/compare/v0.0.2...v0.0.3) (2026-05-21)
 
 
