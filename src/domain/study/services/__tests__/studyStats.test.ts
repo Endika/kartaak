@@ -60,10 +60,7 @@ describe('computeStats — streak', () => {
     expect(computeStats(study).streakDays).toBe(5);
   });
 
-  // BUG: when there is no activity today, computeStreak falls into the for loop
-  // with offset=0 and re-queries today (instead of yesterday), so it returns 0
-  // even if there was a real streak ending yesterday. Skipped until fixed.
-  it.skip('still counts the streak ending yesterday when today has no activity', () => {
+  it('still counts the streak ending yesterday when today has no activity', () => {
     let study = emptyStudy();
     for (let i = 1; i <= 3; i++) {
       study = recordDailyActivity(study, dayKeyAt(-i), {

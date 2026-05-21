@@ -61,20 +61,13 @@ export function computeStats(study: Study, days = 30): StudyStatsSnapshot {
 
 function computeStreak(byDate: Map<DateKey, DailyActivity>): number {
   let streak = 0;
-  const today = todayKey();
-  const todayEntry = byDate.get(today);
-  let cursor = today;
-  if (!todayEntry || todayEntry.reviewed === 0) {
-    cursor = dayKeyAt(-1);
-    const yesterday = byDate.get(cursor);
-    if (!yesterday || yesterday.reviewed === 0) return 0;
-  }
-  for (let offset = 0; offset < 365; offset++) {
-    const key = cursor === today ? today : dayKeyAt(-offset);
-    const entry = byDate.get(key);
+  // If today has no activity yet, the streak (if any) ends yesterday — start there.
+  const todayEntry = byDate.get(todayKey());
+  let offset = todayEntry && todayEntry.reviewed > 0 ? 0 : 1;
+  for (; offset < 365; offset++) {
+    const entry = byDate.get(dayKeyAt(-offset));
     if (!entry || entry.reviewed === 0) break;
     streak++;
-    cursor = dayKeyAt(-(offset + 1));
   }
   return streak;
 }
