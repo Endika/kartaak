@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.9](https://github.com/Endika/kartaak/compare/v0.0.8...v0.0.9) (2026-05-21)
+
+
+### Features
+
+* **i18n:** add English/Spanish/Basque support with language selector ([b9d6d7b](https://github.com/Endika/kartaak/commit/b9d6d7b943c7ecbb924d1fcfa09c6f8f5cb6deca))
+
 ## [0.0.8](https://github.com/Endika/kartaak/compare/v0.0.7...v0.0.8) (2026-05-21)
 
 
