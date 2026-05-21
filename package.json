@@ -4,6 +4,14 @@
   "version": "0.0.3",
   "type": "module",
   "description": "Flashcard study app with AI-generated cards, offline-first PWA",
+  "license": "MIT",
+  "author": "Endika Iglesias",
+  "homepage": "https://endika.github.io/kartaak/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Endika/kartaak.git"
+  },
+  "bugs": "https://github.com/Endika/kartaak/issues",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
