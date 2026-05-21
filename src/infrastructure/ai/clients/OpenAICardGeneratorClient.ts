@@ -1,4 +1,5 @@
 import type {
+  ExistingCardHint,
   GeneratedCard,
   ICardGeneratorService,
 } from '@domain/ai-generation/services/ICardGeneratorService';
@@ -22,11 +23,15 @@ interface OpenAIResponse {
 export class OpenAICardGeneratorClient implements ICardGeneratorService {
   constructor(private readonly apiKeys: IApiKeyStorage) {}
 
-  async generate(workflow: StudyWorkflow, count: number): Promise<GeneratedCard[]> {
+  async generate(
+    workflow: StudyWorkflow,
+    count: number,
+    existing: readonly ExistingCardHint[] = [],
+  ): Promise<GeneratedCard[]> {
     const apiKey = this.apiKeys.get('openai');
     if (!apiKey) throw new MissingApiKeyError('openai');
 
-    const prompt = buildCardPrompt(workflow, count);
+    const prompt = buildCardPrompt(workflow, count, existing);
 
     let response: Response;
     try {

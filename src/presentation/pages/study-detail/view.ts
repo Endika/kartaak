@@ -54,6 +54,7 @@ export function renderStudyDetailView(
       <button id="action-study" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition">${i18n.t('studyDetail.actions.study')}</button>
       <button id="action-add-more" class="px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition">${i18n.t('studyDetail.actions.addMore')}</button>
       <button id="action-export" class="px-4 py-2 rounded-lg border border-slate-300 text-sm hover:bg-slate-100 transition">${i18n.t('studyDetail.actions.export')}</button>
+      <button id="action-dedupe" class="px-4 py-2 rounded-lg border border-slate-300 text-sm hover:bg-slate-100 transition">${i18n.t('studyDetail.actions.dedupe')}</button>
       <button id="action-delete" class="px-4 py-2 rounded-lg border border-red-200 text-sm text-danger hover:bg-red-50 transition ml-auto">${i18n.t('studyDetail.actions.delete')}</button>
     </section>
 

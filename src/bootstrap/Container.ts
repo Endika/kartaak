@@ -1,5 +1,6 @@
 import { AddMoreCardsUseCase } from '@application/use-cases/AddMoreCardsUseCase';
 import { ApplyIssueResolutionUseCase } from '@application/use-cases/ApplyIssueResolutionUseCase';
+import { DedupeStudyCardsUseCase } from '@application/use-cases/DedupeStudyCardsUseCase';
 import { DeleteCardUseCase } from '@application/use-cases/DeleteCardUseCase';
 import { DeleteStudyUseCase } from '@application/use-cases/DeleteStudyUseCase';
 import { EditCardUseCase } from '@application/use-cases/EditCardUseCase';
@@ -48,6 +49,7 @@ export class Container {
   readonly applyIssueResolution = new ApplyIssueResolutionUseCase(this.studies);
   readonly deleteCard = new DeleteCardUseCase(this.studies);
   readonly deleteStudy = new DeleteStudyUseCase(this.studies);
+  readonly dedupeStudyCards = new DedupeStudyCardsUseCase(this.studies);
   readonly renameStudy = new RenameStudyUseCase(this.studies);
   readonly exportStudy = new ExportStudyUseCase(this.studies);
   readonly importStudy = new ImportStudyUseCase(this.studies);

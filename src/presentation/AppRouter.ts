@@ -129,6 +129,7 @@ export class AppRouter {
               resolveIssueWithAI: c.resolveIssueWithAI,
               applyIssueResolution: c.applyIssueResolution,
               deleteCard: c.deleteCard,
+              dedupeStudyCards: c.dedupeStudyCards,
               i18n: c.i18n,
             },
           },

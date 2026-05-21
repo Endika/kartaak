@@ -1,4 +1,5 @@
 import type {
+  ExistingCardHint,
   GeneratedCard,
   ICardGeneratorService,
 } from '@domain/ai-generation/services/ICardGeneratorService';
@@ -26,11 +27,15 @@ interface GeminiResponse {
 export class GeminiCardGeneratorClient implements ICardGeneratorService {
   constructor(private readonly apiKeys: IApiKeyStorage) {}
 
-  async generate(workflow: StudyWorkflow, count: number): Promise<GeneratedCard[]> {
+  async generate(
+    workflow: StudyWorkflow,
+    count: number,
+    existing: readonly ExistingCardHint[] = [],
+  ): Promise<GeneratedCard[]> {
     const apiKey = this.apiKeys.get('gemini');
     if (!apiKey) throw new MissingApiKeyError('gemini');
 
-    const prompt = buildCardPrompt(workflow, count);
+    const prompt = buildCardPrompt(workflow, count, existing);
     const url = `${GEMINI_ENDPOINT}?key=${encodeURIComponent(apiKey)}`;
 
     let response: Response;

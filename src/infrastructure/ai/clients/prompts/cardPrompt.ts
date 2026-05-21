@@ -1,6 +1,13 @@
+import type { ExistingCardHint } from '@domain/ai-generation/services/ICardGeneratorService';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 
-export function buildCardPrompt(workflow: StudyWorkflow, count: number): string {
+const MAX_EXISTING_HINTS = 100;
+
+export function buildCardPrompt(
+  workflow: StudyWorkflow,
+  count: number,
+  existing: readonly ExistingCardHint[] = [],
+): string {
   const topics =
     workflow.topics.length > 0
       ? `Subtopics: ${workflow.topics.join(', ')}`
@@ -23,7 +30,7 @@ export function buildCardPrompt(workflow: StudyWorkflow, count: number): string 
       ].join(' ')
     : `Generate exactly ${count} flashcards.`;
 
-  return [
+  const lines = [
     'You generate flashcards for a study app. Output strict JSON only — no commentary, no markdown fences.',
     '',
     `Theme: ${workflow.theme}`,
@@ -41,5 +48,20 @@ export function buildCardPrompt(workflow: StudyWorkflow, count: number): string 
     '  - No numbering prefixes in the text.',
     '  - Keep each side concise and self-contained.',
     '  - Respond with the JSON array only.',
-  ].join('\n');
+  ];
+
+  if (existing.length > 0) {
+    const shown = existing.slice(0, MAX_EXISTING_HINTS);
+    const overflow = existing.length - shown.length;
+    lines.push(
+      '',
+      `AVOID THESE — already in the user's deck. Do not repeat them or generate near-duplicates (different wording for the same concept also counts as duplicate):`,
+      ...shown.map((c) => `  - ${c.front} | ${c.back}`),
+    );
+    if (overflow > 0) {
+      lines.push(`  (… and ${overflow} more not shown — stay clearly within new territory)`);
+    }
+  }
+
+  return lines.join('\n');
 }

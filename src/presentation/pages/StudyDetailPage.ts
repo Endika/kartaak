@@ -1,4 +1,5 @@
 import type { ApplyIssueResolutionUseCase } from '@application/use-cases/ApplyIssueResolutionUseCase';
+import type { DedupeStudyCardsUseCase } from '@application/use-cases/DedupeStudyCardsUseCase';
 import type { DeleteCardUseCase } from '@application/use-cases/DeleteCardUseCase';
 import type { DeleteStudyUseCase } from '@application/use-cases/DeleteStudyUseCase';
 import type { EditCardUseCase } from '@application/use-cases/EditCardUseCase';
@@ -29,6 +30,7 @@ export interface StudyDetailPageDeps {
   resolveIssueWithAI: ResolveIssueWithAIUseCase;
   applyIssueResolution: ApplyIssueResolutionUseCase;
   deleteCard: DeleteCardUseCase;
+  dedupeStudyCards: DedupeStudyCardsUseCase;
   i18n: I18n;
 }
 
@@ -67,7 +69,7 @@ function paint(root: HTMLElement, ctx: Ctx, study: Study): void {
   );
 
   wireHeader(root, ctx, study, repaint);
-  wireActions(root, ctx, study);
+  wireActions(root, ctx, study, repaint);
   wireCards(root, ctx, study, repaint);
   wireIssues(root, ctx, study, repaint);
 }
@@ -81,7 +83,7 @@ function wireHeader(root: HTMLElement, ctx: Ctx, study: Study, repaint: (s: Stud
   });
 }
 
-function wireActions(root: HTMLElement, ctx: Ctx, study: Study): void {
+function wireActions(root: HTMLElement, ctx: Ctx, study: Study, repaint: (s: Study) => void): void {
   root.querySelector('#action-study')?.addEventListener('click', () => {
     ctx.router.navigate({ type: 'study', study });
   });
@@ -90,6 +92,9 @@ function wireActions(root: HTMLElement, ctx: Ctx, study: Study): void {
   });
   root.querySelector('#action-export')?.addEventListener('click', () => {
     void exportStudy(ctx, study);
+  });
+  root.querySelector('#action-dedupe')?.addEventListener('click', () => {
+    void openDedupeModal(ctx, study, repaint);
   });
   root.querySelector('#action-delete')?.addEventListener('click', () => {
     confirmDelete(ctx, study);
@@ -186,6 +191,58 @@ function openRenameModal(ctx: Ctx, study: Study, onRenamed: (study: Study) => vo
         modal.setBusy(false);
         throw err;
       }
+    },
+  );
+}
+
+async function openDedupeModal(
+  ctx: Ctx,
+  study: Study,
+  onDone: (study: Study) => void,
+): Promise<void> {
+  const { i18n } = ctx.deps;
+  const preview = await ctx.deps.dedupeStudyCards.preview(study.id);
+
+  if (preview.duplicatesToRemove === 0) {
+    openModal(
+      {
+        title: i18n.t('studyDetail.actions.dedupe'),
+        primaryLabel: i18n.t('app.cancel'),
+        bodyHtml: `<p class="text-sm text-slate-600">${i18n.t('studyDetail.dedupe.empty')}</p>`,
+      },
+      async () => {
+        // primary just closes
+      },
+    );
+    return;
+  }
+
+  const modal = openModal(
+    {
+      title: i18n.t('studyDetail.dedupe.modalTitle'),
+      primaryLabel: i18n.t('studyDetail.dedupe.confirm'),
+      secondaryLabel: i18n.t('app.cancel'),
+      destructive: true,
+      bodyHtml: `
+        <p class="text-sm text-slate-600">
+          ${i18n.t('studyDetail.dedupe.summary', {
+            duplicates: preview.duplicatesToRemove,
+            groups: preview.uniqueGroups,
+          })}
+        </p>
+      `,
+    },
+    async () => {
+      modal.setBusy(true, i18n.t('studyDetail.dedupe.busy'));
+      const result = await ctx.deps.dedupeStudyCards.execute(study.id);
+      modal.close();
+      alert(
+        i18n.t('studyDetail.dedupe.done', {
+          removed: result.removed,
+          kept: result.study.cards.length,
+        }),
+      );
+      onDone(result.study);
     },
   );
 }

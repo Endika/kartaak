@@ -33,4 +33,20 @@ describe('dedupeCards', () => {
   it('returns zero duplicates for an empty input', () => {
     expect(dedupeCards([])).toEqual({ unique: [], duplicatesRemoved: 0 });
   });
+
+  it('ignores diacritics so accented and unaccented forms match', () => {
+    const a = createCard({ front: 'Capital of France', back: 'París' });
+    const b = createCard({ front: 'Capital of France', back: 'Paris' });
+    const { unique, duplicatesRemoved } = dedupeCards([a, b]);
+    expect(unique).toHaveLength(1);
+    expect(duplicatesRemoved).toBe(1);
+  });
+
+  it('ignores punctuation differences (trailing ?, leading ¿, commas, etc.)', () => {
+    const a = createCard({ front: '¿Capital de Francia?', back: 'Paris' });
+    const b = createCard({ front: 'Capital de Francia', back: 'Paris.' });
+    const { unique, duplicatesRemoved } = dedupeCards([a, b]);
+    expect(unique).toHaveLength(1);
+    expect(duplicatesRemoved).toBe(1);
+  });
 });

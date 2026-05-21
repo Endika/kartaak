@@ -22,7 +22,8 @@ export class AddMoreCardsUseCase {
     const study = await this.studies.findById(studyId);
     if (!study) throw new AppError(`Study ${studyId} not found`);
 
-    const raw = await this.generator.generate(workflow, workflow.quantity);
+    const existingHints = study.cards.map((c) => ({ front: c.front, back: c.back }));
+    const raw = await this.generator.generate(workflow, workflow.quantity, existingHints);
     if (raw.length === 0) {
       throw new AIGenerationError('Generator returned no cards');
     }

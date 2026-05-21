@@ -66,6 +66,25 @@ describe('AddMoreCardsUseCase', () => {
     await expect(useCase.execute(study.id, workflow)).rejects.toBeInstanceOf(AIGenerationError);
   });
 
+  it('hands the existing cards to the generator so the AI can avoid them', async () => {
+    const repo = new InMemoryStudyRepository();
+    const generator = new FakeCardGenerator();
+    generator.enqueue([
+      { front: '7 x 1', back: '7' },
+      { front: '7 x 2', back: '14' },
+    ]);
+    const { study } = await new GenerateFullStudyUseCase(generator, repo).execute(workflow);
+
+    generator.enqueue([{ front: '7 x 3', back: '21' }]);
+    const useCase = new AddMoreCardsUseCase(generator, repo);
+    await useCase.execute(study.id, workflow);
+
+    expect(generator.lastExisting).toEqual([
+      { front: '7 x 1', back: '7' },
+      { front: '7 x 2', back: '14' },
+    ]);
+  });
+
   it('updates the persisted workflow with the latest one passed in', async () => {
     const repo = new InMemoryStudyRepository();
     const generator = new FakeCardGenerator();

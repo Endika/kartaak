@@ -6,6 +6,15 @@ export interface GeneratedCard {
   imageUrl?: string;
 }
 
+export interface ExistingCardHint {
+  front: string;
+  back: string;
+}
+
 export interface ICardGeneratorService {
-  generate(workflow: StudyWorkflow, count: number): Promise<GeneratedCard[]>;
+  generate(
+    workflow: StudyWorkflow,
+    count: number,
+    existing?: readonly ExistingCardHint[],
+  ): Promise<GeneratedCard[]>;
 }
