@@ -15,6 +15,14 @@ export function buildCardPrompt(workflow: StudyWorkflow, count: number): string 
     ? 'If a public image would clearly aid recall (flags, paintings, anatomy), include an "imageUrl" pointing to a stable Wikimedia Commons or Wikipedia URL. Otherwise omit the field.'
     : 'Do NOT include an "imageUrl" field.';
 
+  const isPreview = count < workflow.quantity;
+  const sizeNote = isPreview
+    ? [
+        `Generate exactly ${count} flashcards as a REPRESENTATIVE PREVIEW of what a full batch of ${workflow.quantity} cards would look like.`,
+        'Pick a slice that spans the spread of difficulty and subtopics so the user can judge the full batch from these samples.',
+      ].join(' ')
+    : `Generate exactly ${count} flashcards.`;
+
   return [
     'You generate flashcards for a study app. Output strict JSON only — no commentary, no markdown fences.',
     '',
@@ -22,7 +30,7 @@ export function buildCardPrompt(workflow: StudyWorkflow, count: number): string 
     topics,
     `Generation instructions from the user: ${instructions}`,
     '',
-    `Generate exactly ${count} flashcard objects in a JSON array.`,
+    sizeNote,
     'Each object MUST have:',
     '  - "front": the prompt side (question, term, problem, image cue, etc.) as a string.',
     '  - "back": the answer side as a string.',
