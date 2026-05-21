@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.14](https://github.com/Endika/kartaak/compare/v0.0.13...v0.0.14) (2026-05-21)
+
+
+### Features
+
+* **study:** scheduler that surfaces what's actually due ([2378efc](https://github.com/Endika/kartaak/commit/2378efc5aee1596d141027052ce84c13e6cdf243))
+
 ## [0.0.13](https://github.com/Endika/kartaak/compare/v0.0.12...v0.0.13) (2026-05-21)
 
 
