@@ -8,6 +8,7 @@ import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { ValidationError } from '@shared/errors/AppError';
 import type { I18n } from '@shared/i18n';
 import type { PageContext, WorkflowDraft } from '../AppRouter';
+import { aiErrorMessage } from '../aiErrorMessage';
 import { appShell, escapeHtml } from '../components/Layout';
 import { MODEL_OPTIONS } from '../components/modelOptions';
 import { wireToggleGroup } from '../components/toggleGroup';
@@ -170,8 +171,7 @@ export function renderWorkflowPage(
       const previewCards = await ctx.deps.generatePreview.execute(workflow);
       ctx.router.navigate({ type: 'preview', workflow, previewCards });
     } catch (err) {
-      const message = err instanceof Error ? err.message : i18n.t('workflow.previewFailed');
-      errorBox.textContent = message;
+      errorBox.textContent = aiErrorMessage(err, i18n, 'workflow.previewFailed');
       errorBox.classList.remove('hidden');
       submitBtn.disabled = false;
       submitBtn.textContent = i18n.t('workflow.submit');

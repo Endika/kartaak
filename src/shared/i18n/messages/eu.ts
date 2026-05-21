@@ -6,6 +6,22 @@ export const eu: Record<string, string> = {
   'app.saving': 'Gordetzen…',
   'app.somethingWentWrong': 'Zerbait gaizki joan da',
 
+  // AA / sare erroreak
+  'error.ai.missingKey': 'Ez dago {provider}-(e)ko API gakorik. Gehitu bat Ezarpenetan.',
+  'error.ai.invalidKey': '{provider}-k API gakoa baztertu du. Berrikusi Ezarpenetan.',
+  'error.ai.rateLimit':
+    '{provider}-k eskaerak mugatzen ditu. Itxaron pixka bat eta saiatu berriro.',
+  'error.ai.providerUnavailable':
+    '{provider} ez dago erabilgarri (HTTP {status}). Saiatu berriro pixka bat itxaron ondoren.',
+  'error.ai.network':
+    'Ezin izan da {provider}-(r)ekin konektatu. Egiaztatu zure konexioa eta saiatu berriro.',
+  'error.ai.invalidResponse': '{provider}-k espero ez zen erantzun bat itzuli du. Saiatu berriro.',
+  'error.ai.empty': '{provider}-k erantzun hutsa itzuli du. Saiatu berriro.',
+  'error.ai.noCards':
+    'Ereduak ez du erabilgarriko txartelik itzuli. Saiatu gaia edo eredua aldatzen.',
+  'error.ai.allDuplicates':
+    'Sortutako txartel guztiak lehendik daudenen bikoiztuak dira. Aldatu gaia edo argibideak.',
+
   // Flip card
   'flipCard.aria': 'Txartela, sakatu erantzuna ikusteko',
   'flipCard.tapToFlip': 'sakatu biratzeko',

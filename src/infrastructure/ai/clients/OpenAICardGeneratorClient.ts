@@ -4,7 +4,12 @@ import type {
 } from '@domain/ai-generation/services/ICardGeneratorService';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
-import { AIGenerationError } from '@shared/errors/AppError';
+import {
+  EmptyAIResponseError,
+  InvalidAIResponseError,
+  MissingApiKeyError,
+} from '@shared/errors/AppError';
+import { mapFetchFailure, mapHttpError, safeJson } from '../errors';
 import { buildCardPrompt } from './prompts/cardPrompt';
 
 const OPENAI_MODEL = 'gpt-4o-mini';
@@ -12,7 +17,6 @@ const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
 interface OpenAIResponse {
   choices?: Array<{ message?: { content?: string } }>;
-  error?: { message?: string };
 }
 
 export class OpenAICardGeneratorClient implements ICardGeneratorService {
@@ -20,9 +24,7 @@ export class OpenAICardGeneratorClient implements ICardGeneratorService {
 
   async generate(workflow: StudyWorkflow, count: number): Promise<GeneratedCard[]> {
     const apiKey = this.apiKeys.get('openai');
-    if (!apiKey) {
-      throw new AIGenerationError('Missing OpenAI API key. Add one in Settings.');
-    }
+    if (!apiKey) throw new MissingApiKeyError('openai');
 
     const prompt = buildCardPrompt(workflow, count);
 
@@ -49,32 +51,17 @@ export class OpenAICardGeneratorClient implements ICardGeneratorService {
         }),
       });
     } catch (cause) {
-      throw new AIGenerationError(
-        'Network error reaching OpenAI. Browsers usually block direct OpenAI calls; you may need a proxy.',
-        cause,
-      );
+      throw mapFetchFailure('openai', cause);
     }
 
     if (!response.ok) {
-      const body = (await safeJson(response)) as OpenAIResponse | null;
-      const reason = body?.error?.message ?? response.statusText;
-      throw new AIGenerationError(`OpenAI request failed (${response.status}): ${reason}`);
+      throw mapHttpError('openai', response, await safeJson(response));
     }
 
     const data = (await safeJson(response)) as OpenAIResponse | null;
     const text = data?.choices?.[0]?.message?.content;
-    if (!text) {
-      throw new AIGenerationError('OpenAI returned an empty response');
-    }
+    if (!text) throw new EmptyAIResponseError('openai');
     return extractCards(text);
-  }
-}
-
-async function safeJson(response: Response): Promise<unknown> {
-  try {
-    return await response.json();
-  } catch {
-    return null;
   }
 }
 
@@ -83,7 +70,7 @@ function extractCards(text: string): GeneratedCard[] {
   try {
     parsed = JSON.parse(text);
   } catch (cause) {
-    throw new AIGenerationError('Could not parse OpenAI response as JSON', cause);
+    throw new InvalidAIResponseError('openai', 'response was not valid JSON', cause);
   }
   const list =
     Array.isArray(parsed) && parsed.length > 0
@@ -92,7 +79,7 @@ function extractCards(text: string): GeneratedCard[] {
         ? ((parsed as Record<string, unknown>).cards as unknown[])
         : null;
   if (!list) {
-    throw new AIGenerationError('OpenAI response did not contain a cards array');
+    throw new InvalidAIResponseError('openai', 'response did not contain a cards array');
   }
 
   const cards: GeneratedCard[] = [];
@@ -109,7 +96,7 @@ function extractCards(text: string): GeneratedCard[] {
     cards.push(card);
   }
   if (cards.length === 0) {
-    throw new AIGenerationError('OpenAI returned no usable cards');
+    throw new InvalidAIResponseError('openai', 'no usable cards in array');
   }
   return cards;
 }

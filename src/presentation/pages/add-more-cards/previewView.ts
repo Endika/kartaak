@@ -3,6 +3,7 @@ import type { GenerateCardPreviewUseCase } from '@application/use-cases/Generate
 import type { Card } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
 import type { I18n } from '@shared/i18n';
+import { aiErrorMessage } from '../../aiErrorMessage';
 import { appShell, escapeHtml } from '../../components/Layout';
 import { type Draft, workflowFromDraft } from './draft';
 
@@ -49,8 +50,7 @@ export function paintPreview(
       const next = await deps.generatePreview.execute(workflow);
       callbacks.onRegenerated(next);
     } catch (err) {
-      errorBox.textContent =
-        err instanceof Error ? err.message : i18n.t('addMore.preview.previewFailed');
+      errorBox.textContent = aiErrorMessage(err, i18n, 'addMore.preview.previewFailed');
       errorBox.classList.remove('hidden');
       regenerateBtn.disabled = false;
       regenerateBtn.textContent = i18n.t('addMore.preview.regenerate');
@@ -76,8 +76,7 @@ export function paintPreview(
       }
       callbacks.onAdded(next.id);
     } catch (err) {
-      errorBox.textContent =
-        err instanceof Error ? err.message : i18n.t('addMore.preview.generationFailed');
+      errorBox.textContent = aiErrorMessage(err, i18n, 'addMore.preview.generationFailed');
       errorBox.classList.remove('hidden');
       generateBtn.disabled = false;
       generateBtn.textContent = i18n.t('addMore.preview.add', { count: draft.quantity });

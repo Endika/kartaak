@@ -4,7 +4,12 @@ import type {
 } from '@domain/ai-generation/services/ICardGeneratorService';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
-import { AIGenerationError } from '@shared/errors/AppError';
+import {
+  EmptyAIResponseError,
+  InvalidAIResponseError,
+  MissingApiKeyError,
+} from '@shared/errors/AppError';
+import { mapFetchFailure, mapHttpError, safeJson } from '../errors';
 import { buildCardPrompt } from './prompts/cardPrompt';
 
 const ANTHROPIC_MODEL = 'claude-haiku-4-5';
@@ -13,7 +18,6 @@ const ANTHROPIC_VERSION = '2023-06-01';
 
 interface AnthropicResponse {
   content?: Array<{ type: string; text?: string }>;
-  error?: { message?: string };
 }
 
 export class AnthropicCardGeneratorClient implements ICardGeneratorService {
@@ -21,9 +25,7 @@ export class AnthropicCardGeneratorClient implements ICardGeneratorService {
 
   async generate(workflow: StudyWorkflow, count: number): Promise<GeneratedCard[]> {
     const apiKey = this.apiKeys.get('anthropic');
-    if (!apiKey) {
-      throw new AIGenerationError('Missing Anthropic API key. Add one in Settings.');
-    }
+    if (!apiKey) throw new MissingApiKeyError('anthropic');
 
     const prompt = buildCardPrompt(workflow, count);
 
@@ -47,29 +49,17 @@ export class AnthropicCardGeneratorClient implements ICardGeneratorService {
         }),
       });
     } catch (cause) {
-      throw new AIGenerationError('Network error reaching Anthropic', cause);
+      throw mapFetchFailure('anthropic', cause);
     }
 
     if (!response.ok) {
-      const body = (await safeJson(response)) as AnthropicResponse | null;
-      const reason = body?.error?.message ?? response.statusText;
-      throw new AIGenerationError(`Anthropic request failed (${response.status}): ${reason}`);
+      throw mapHttpError('anthropic', response, await safeJson(response));
     }
 
     const data = (await safeJson(response)) as AnthropicResponse | null;
     const text = data?.content?.find((c) => c.type === 'text')?.text;
-    if (!text) {
-      throw new AIGenerationError('Anthropic returned an empty response');
-    }
+    if (!text) throw new EmptyAIResponseError('anthropic');
     return parseCards(text);
-  }
-}
-
-async function safeJson(response: Response): Promise<unknown> {
-  try {
-    return await response.json();
-  } catch {
-    return null;
   }
 }
 
@@ -79,10 +69,10 @@ function parseCards(raw: string): GeneratedCard[] {
   try {
     parsed = JSON.parse(jsonText);
   } catch (cause) {
-    throw new AIGenerationError('Could not parse Anthropic response as JSON', cause);
+    throw new InvalidAIResponseError('anthropic', 'response was not valid JSON', cause);
   }
   if (!Array.isArray(parsed)) {
-    throw new AIGenerationError('Anthropic response was not a JSON array');
+    throw new InvalidAIResponseError('anthropic', 'response was not a JSON array');
   }
   const cards: GeneratedCard[] = [];
   for (const item of parsed) {
@@ -98,7 +88,7 @@ function parseCards(raw: string): GeneratedCard[] {
     cards.push(card);
   }
   if (cards.length === 0) {
-    throw new AIGenerationError('Anthropic returned no usable cards');
+    throw new InvalidAIResponseError('anthropic', 'no usable cards in array');
   }
   return cards;
 }

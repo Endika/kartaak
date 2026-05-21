@@ -4,7 +4,12 @@ import type {
 } from '@domain/ai-generation/services/ICardGeneratorService';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
-import { AIGenerationError } from '@shared/errors/AppError';
+import {
+  EmptyAIResponseError,
+  InvalidAIResponseError,
+  MissingApiKeyError,
+} from '@shared/errors/AppError';
+import { mapFetchFailure, mapHttpError, safeJson } from '../errors';
 import { buildCardPrompt } from './prompts/cardPrompt';
 
 const GEMINI_MODEL = 'gemini-2.5-flash';
@@ -16,7 +21,6 @@ interface GeminiResponse {
       parts?: Array<{ text?: string }>;
     };
   }>;
-  error?: { message?: string };
 }
 
 export class GeminiCardGeneratorClient implements ICardGeneratorService {
@@ -24,9 +28,7 @@ export class GeminiCardGeneratorClient implements ICardGeneratorService {
 
   async generate(workflow: StudyWorkflow, count: number): Promise<GeneratedCard[]> {
     const apiKey = this.apiKeys.get('gemini');
-    if (!apiKey) {
-      throw new AIGenerationError('Missing Gemini API key. Add one in Settings.');
-    }
+    if (!apiKey) throw new MissingApiKeyError('gemini');
 
     const prompt = buildCardPrompt(workflow, count);
     const url = `${GEMINI_ENDPOINT}?key=${encodeURIComponent(apiKey)}`;
@@ -45,30 +47,18 @@ export class GeminiCardGeneratorClient implements ICardGeneratorService {
         }),
       });
     } catch (cause) {
-      throw new AIGenerationError('Network error reaching Gemini', cause);
+      throw mapFetchFailure('gemini', cause);
     }
 
     if (!response.ok) {
-      const body = await safeJson(response);
-      const reason = body?.error?.message ?? response.statusText;
-      throw new AIGenerationError(`Gemini request failed (${response.status}): ${reason}`);
+      throw mapHttpError('gemini', response, await safeJson(response));
     }
 
     const data = (await safeJson(response)) as GeminiResponse | null;
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      throw new AIGenerationError('Gemini returned an empty response');
-    }
+    if (!text) throw new EmptyAIResponseError('gemini');
 
     return parseCards(text);
-  }
-}
-
-async function safeJson(response: Response): Promise<GeminiResponse | null> {
-  try {
-    return (await response.json()) as GeminiResponse;
-  } catch {
-    return null;
   }
 }
 
@@ -78,10 +68,10 @@ function parseCards(raw: string): GeneratedCard[] {
   try {
     parsed = JSON.parse(jsonText);
   } catch (cause) {
-    throw new AIGenerationError('Could not parse Gemini response as JSON', cause);
+    throw new InvalidAIResponseError('gemini', 'response was not valid JSON', cause);
   }
   if (!Array.isArray(parsed)) {
-    throw new AIGenerationError('Gemini response was not a JSON array');
+    throw new InvalidAIResponseError('gemini', 'response was not a JSON array');
   }
   const cards: GeneratedCard[] = [];
   for (const item of parsed) {
@@ -97,7 +87,7 @@ function parseCards(raw: string): GeneratedCard[] {
     cards.push(card);
   }
   if (cards.length === 0) {
-    throw new AIGenerationError('Gemini returned no usable cards');
+    throw new InvalidAIResponseError('gemini', 'no usable cards in array');
   }
   return cards;
 }

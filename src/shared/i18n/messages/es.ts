@@ -5,6 +5,20 @@ export const es: Record<string, string> = {
   'app.saving': 'Guardando…',
   'app.somethingWentWrong': 'Algo ha salido mal',
 
+  // Errores AI / red
+  'error.ai.missingKey': 'No hay clave API de {provider}. Añádela en Ajustes.',
+  'error.ai.invalidKey': '{provider} ha rechazado la clave API. Revísala en Ajustes.',
+  'error.ai.rateLimit': '{provider} está limitando peticiones. Espera un momento y reintenta.',
+  'error.ai.providerUnavailable':
+    '{provider} no está disponible ahora mismo (HTTP {status}). Reintenta en un momento.',
+  'error.ai.network': 'No se ha podido conectar con {provider}. Comprueba tu conexión y reintenta.',
+  'error.ai.invalidResponse': '{provider} ha devuelto una respuesta inesperada. Reintenta.',
+  'error.ai.empty': '{provider} ha devuelto una respuesta vacía. Reintenta.',
+  'error.ai.noCards':
+    'El modelo no ha devuelto ninguna tarjeta utilizable. Prueba a cambiar el tema o el modelo.',
+  'error.ai.allDuplicates':
+    'Todas las tarjetas generadas son duplicadas de existentes. Cambia el tema o las instrucciones.',
+
   // Flip card
   'flipCard.aria': 'Tarjeta, tócala para ver la respuesta',
   'flipCard.tapToFlip': 'tócala para girar',

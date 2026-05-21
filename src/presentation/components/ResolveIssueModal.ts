@@ -6,6 +6,7 @@ import type { CardIssue, CardIssueType } from '@domain/study/entities/CardIssue'
 import type { Study } from '@domain/study/entities/Study';
 import type { IStudyRepository } from '@domain/study/repositories/IStudyRepository';
 import type { I18n } from '@shared/i18n';
+import { aiErrorMessage } from '../aiErrorMessage';
 import { escapeHtml } from './Layout';
 import { openModal } from './Modal';
 
@@ -70,7 +71,12 @@ export function openResolveIssueModal(
       }
 
       modal.setBusy(true, i18n.t('resolveIssueModal.asking'));
-      const resolution = await deps.resolveIssueWithAI.execute(study.id, card.id, issue.id);
+      const resolution = await deps.resolveIssueWithAI
+        .execute(study.id, card.id, issue.id)
+        .catch((err) => {
+          modal.setBusy(false);
+          throw new Error(aiErrorMessage(err, i18n, 'app.somethingWentWrong'));
+        });
       proposedFront = resolution.proposedFront;
       proposedBack = resolution.proposedBack;
       renderProposal(

@@ -4,6 +4,7 @@ import type { Card } from '@domain/study/entities/Card';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type { I18n } from '@shared/i18n';
 import type { PageContext } from '../AppRouter';
+import { aiErrorMessage } from '../aiErrorMessage';
 import { appShell, escapeHtml } from '../components/Layout';
 
 export interface PreviewPageDeps {
@@ -91,8 +92,7 @@ export function renderPreviewPage(
       const cards = await ctx.deps.generatePreview.execute(workflow);
       ctx.router.navigate({ type: 'preview', workflow, previewCards: cards });
     } catch (err) {
-      const message = err instanceof Error ? err.message : i18n.t('preview.regenerationFailed');
-      errorBox.textContent = message;
+      errorBox.textContent = aiErrorMessage(err, i18n, 'preview.regenerationFailed');
       errorBox.classList.remove('hidden');
       regenerateBtn.disabled = false;
       regenerateBtn.textContent = i18n.t('preview.regenerate');
@@ -111,8 +111,7 @@ export function renderPreviewPage(
       }
       ctx.router.navigate({ type: 'study-detail', studyId: study.id });
     } catch (err) {
-      const message = err instanceof Error ? err.message : i18n.t('preview.generationFailed');
-      errorBox.textContent = message;
+      errorBox.textContent = aiErrorMessage(err, i18n, 'preview.generationFailed');
       errorBox.classList.remove('hidden');
       generateBtn.disabled = false;
       generateBtn.textContent = i18n.t('preview.generateAll', { count: workflow.quantity });

@@ -5,6 +5,19 @@ export const en: Record<string, string> = {
   'app.saving': 'Saving…',
   'app.somethingWentWrong': 'Something went wrong',
 
+  // AI / network errors
+  'error.ai.missingKey': 'No {provider} API key set. Add one in Settings.',
+  'error.ai.invalidKey': 'The {provider} API key was rejected. Check it in Settings.',
+  'error.ai.rateLimit': '{provider} is throttling requests. Wait a moment and try again.',
+  'error.ai.providerUnavailable':
+    '{provider} is unavailable right now (HTTP {status}). Try again in a moment.',
+  'error.ai.network': 'Could not reach {provider}. Check your connection and try again.',
+  'error.ai.invalidResponse': '{provider} returned an unexpected response. Try again.',
+  'error.ai.empty': '{provider} returned an empty response. Try again.',
+  'error.ai.noCards': 'The model did not return any usable card. Try changing the topic or model.',
+  'error.ai.allDuplicates':
+    'All generated cards were duplicates of existing ones. Try changing the topic or instructions.',
+
   // Flip card
   'flipCard.aria': 'Flashcard, tap to reveal answer',
   'flipCard.tapToFlip': 'tap to flip',

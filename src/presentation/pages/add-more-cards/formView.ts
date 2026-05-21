@@ -5,6 +5,7 @@ import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { ValidationError } from '@shared/errors/AppError';
 import type { I18n } from '@shared/i18n';
+import { aiErrorMessage } from '../../aiErrorMessage';
 import { appShell, escapeHtml } from '../../components/Layout';
 import { MODEL_OPTIONS } from '../../components/modelOptions';
 import { wireToggleGroup } from '../../components/toggleGroup';
@@ -87,8 +88,7 @@ export function paintForm(
       const cards = await deps.generatePreview.execute(workflow);
       callbacks.onPreviewReady(cards, nextDraft);
     } catch (err) {
-      errorBox.textContent =
-        err instanceof Error ? err.message : i18n.t('addMore.form.previewFailed');
+      errorBox.textContent = aiErrorMessage(err, i18n, 'addMore.form.previewFailed');
       errorBox.classList.remove('hidden');
       submitBtn.disabled = false;
       submitBtn.textContent = i18n.t('addMore.form.submit');
