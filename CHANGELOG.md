@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.0.6](https://github.com/Endika/kartaak/compare/v0.0.5...v0.0.6) (2026-05-21)
+
+
+### Features
+
+* **ai:** add openai and anthropic providers + anchor preview prompt ([1e39fa1](https://github.com/Endika/kartaak/commit/1e39fa185c2aa28a35f53ed9ef1b41d6d186c469))
+* **stats:** daily history, streak counter and activity heatmap ([83beb9f](https://github.com/Endika/kartaak/commit/83beb9fcd050bd67f4c7ffd9d9212785e07cb71c))
+* **study:** add-more-cards flow with workflow edit and preview ([27f7781](https://github.com/Endika/kartaak/commit/27f7781c9431956fe0781fada884277c71594f60))
+* **study:** card issues, edit and delete plus study export/import ([7b6587c](https://github.com/Endika/kartaak/commit/7b6587c756a98bc10ecddea6a4edf969e79236a6))
+* **study:** rename, search and sort in the multi-study list ([f3ae969](https://github.com/Endika/kartaak/commit/f3ae9696cc82d22797a73c19ceae4db1838e0a7f))
+* **study:** resolve issues with ai ([a710228](https://github.com/Endika/kartaak/commit/a710228d8c2c23820f23824af0115e9217f2f55c))
+* **ui:** study detail page, edit/issue modals and multi-model picker ([36a38b7](https://github.com/Endika/kartaak/commit/36a38b789c9a3fa85eb44ffbd8131a32ac805e0b))
+
+
+### Bug Fixes
+
+* **pwa:** poll for sw updates and surface the reload banner properly ([e9fdb97](https://github.com/Endika/kartaak/commit/e9fdb97ef4334882a97b0aa1403f84b225c223f4))
+
 ## [0.0.5](https://github.com/Endika/kartaak/compare/v0.0.4...v0.0.5) (2026-05-21)
 
 
