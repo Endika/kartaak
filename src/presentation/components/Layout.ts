@@ -13,6 +13,9 @@ export function appShell(content: string, opts?: { back?: { label: string; onBac
       <main class="flex-1 px-6 py-6 max-w-3xl w-full mx-auto">
         ${content}
       </main>
+      <footer class="px-6 py-3 text-center text-xs text-slate-400 select-none">
+        v${__APP_VERSION__}
+      </footer>
     </div>
   `;
 }
