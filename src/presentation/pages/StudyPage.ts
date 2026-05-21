@@ -3,6 +3,7 @@ import type { MarkCardIssueUseCase } from '@application/use-cases/MarkCardIssueU
 import type { ReviewCardUseCase } from '@application/use-cases/ReviewCardUseCase';
 import type { Card, ReviewResult } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
+import type { ISoundPlayer } from '@infrastructure/audio/SoundPlayer';
 import type { I18n } from '@shared/i18n';
 import type { PageContext } from '../AppRouter';
 import { attachFlipBehavior, flipCardHtml } from '../components/CardFlip';
@@ -15,6 +16,7 @@ export interface StudyPageDeps {
   editCard: EditCardUseCase;
   markCardIssue: MarkCardIssueUseCase;
   i18n: I18n;
+  sounds: ISoundPlayer;
 }
 
 type Ctx = PageContext<StudyPageDeps>;
@@ -108,6 +110,7 @@ export function renderStudyPage(root: HTMLElement, ctx: Ctx, study: Study): void
       btn.addEventListener('click', async () => {
         if (!flipped) return;
         const result = btn.dataset.result as ReviewResult;
+        playReviewSound(ctx.deps.sounds, result);
         actions.querySelectorAll('button').forEach((b) => {
           b.disabled = true;
         });
@@ -157,4 +160,10 @@ export function renderStudyPage(root: HTMLElement, ctx: Ctx, study: Study): void
   }
 
   paint();
+}
+
+function playReviewSound(sounds: ISoundPlayer, result: ReviewResult): void {
+  if (result === 'correct') sounds.playCorrect();
+  else if (result === 'partial') sounds.playPartial();
+  else sounds.playIncorrect();
 }

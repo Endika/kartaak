@@ -1,4 +1,5 @@
 import type { AIModelId } from '@domain/study/value-objects/StudyWorkflow';
+import type { ISoundPlayer } from '@infrastructure/audio/SoundPlayer';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { type I18n, isLocale, LOCALE_LABELS, LOCALES } from '@shared/i18n';
 import type { PageContext } from '../AppRouter';
@@ -7,6 +8,7 @@ import { appShell, escapeHtml } from '../components/Layout';
 export interface SettingsPageDeps {
   apiKeys: IApiKeyStorage;
   i18n: I18n;
+  sounds: ISoundPlayer;
 }
 
 type Ctx = PageContext<SettingsPageDeps>;
@@ -65,6 +67,7 @@ export function renderSettingsPage(root: HTMLElement, ctx: Ctx): void {
     `
     <h1 class="text-2xl font-bold mb-6">${i18n.t('settings.title')}</h1>
     ${renderLanguageSection(i18n)}
+    ${renderSoundsSection(i18n, ctx.deps.sounds.isEnabled())}
     ${PROVIDERS.map((p) => renderProviderSection(ctx, p)).join('')}
   `,
     { back: { label: i18n.t('settings.back'), onBackId: 'back-btn' } },
@@ -75,10 +78,33 @@ export function renderSettingsPage(root: HTMLElement, ctx: Ctx): void {
   });
 
   wireLanguageSelector(root, i18n);
+  wireSoundsToggle(root, ctx.deps.sounds);
 
   for (const provider of PROVIDERS) {
     wireProvider(root, ctx, provider);
   }
+}
+
+function renderSoundsSection(i18n: I18n, enabled: boolean): string {
+  return `
+    <section class="rounded-xl border border-slate-200 bg-white p-5 mb-5">
+      <h2 class="font-semibold mb-1">${i18n.t('settings.sounds.heading')}</h2>
+      <p class="text-sm text-slate-500 mb-3">${i18n.t('settings.sounds.hint')}</p>
+      <label class="inline-flex items-center gap-2 cursor-pointer text-sm">
+        <input id="sounds-toggle" type="checkbox" ${enabled ? 'checked' : ''}
+               class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+        <span>${i18n.t('settings.sounds.toggle')}</span>
+      </label>
+    </section>
+  `;
+}
+
+function wireSoundsToggle(root: HTMLElement, sounds: ISoundPlayer): void {
+  const toggle = root.querySelector<HTMLInputElement>('#sounds-toggle');
+  toggle?.addEventListener('change', () => {
+    sounds.setEnabled(toggle.checked);
+    if (toggle.checked) sounds.playCorrect();
+  });
 }
 
 function renderLanguageSection(i18n: I18n): string {

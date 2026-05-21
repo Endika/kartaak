@@ -17,6 +17,8 @@ import { AnthropicCardGeneratorClient } from '@infrastructure/ai/clients/Anthrop
 import { GeminiCardGeneratorClient } from '@infrastructure/ai/clients/GeminiCardGeneratorClient';
 import { OpenAICardGeneratorClient } from '@infrastructure/ai/clients/OpenAICardGeneratorClient';
 import { IssueResolverRouter } from '@infrastructure/ai/IssueResolverRouter';
+import { WebAudioSoundPlayer } from '@infrastructure/audio/SoundPlayer';
+import { LocalStorageSoundPreference } from '@infrastructure/audio/SoundPreferenceStorage';
 import { IndexedDBStudyRepository } from '@infrastructure/persistence/indexeddb/IndexedDBStudyRepository';
 import { LocalStorageApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { detectLocale, I18n, LocalStorageLocalePreference } from '@shared/i18n';
@@ -25,6 +27,8 @@ export class Container {
   readonly apiKeys = new LocalStorageApiKeyStorage();
   readonly localePreference = new LocalStorageLocalePreference();
   readonly i18n = new I18n(this.localePreference.load() ?? detectLocale(), this.localePreference);
+  readonly soundPreference = new LocalStorageSoundPreference();
+  readonly sounds = new WebAudioSoundPlayer(this.soundPreference);
   readonly studies = new IndexedDBStudyRepository();
   readonly generator = new CardGeneratorRouter({
     gemini: new GeminiCardGeneratorClient(this.apiKeys),
