@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8](https://github.com/Endika/kartaak/compare/v0.0.7...v0.0.8) (2026-05-21)
+
+
+### Documentation
+
+* rewrite readme for a public, friendlier tone ([636e8cf](https://github.com/Endika/kartaak/commit/636e8cf593dcd3c0d8de48a8203a22db90d1391d))
+
 ## [0.0.7](https://github.com/Endika/kartaak/compare/v0.0.6...v0.0.7) (2026-05-21)
 
 
