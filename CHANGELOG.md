@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.13](https://github.com/Endika/kartaak/compare/v0.0.12...v0.0.13) (2026-05-21)
+
+
+### Features
+
+* **ux:** promote Study as the primary action ([f2acc7e](https://github.com/Endika/kartaak/commit/f2acc7e50fda9bdab6f701a6bd3b2a0c2a4a6516))
+
 ## [0.0.12](https://github.com/Endika/kartaak/compare/v0.0.11...v0.0.12) (2026-05-21)
 
 
