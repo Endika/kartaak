@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.11](https://github.com/Endika/kartaak/compare/v0.0.10...v0.0.11) (2026-05-21)
+
+
+### Features
+
+* **study:** play a subtle tone after rating a card ([20f0d15](https://github.com/Endika/kartaak/commit/20f0d1518d7363913f3bcfd1a88f9181364bf1af))
+
 ## [0.0.10](https://github.com/Endika/kartaak/compare/v0.0.9...v0.0.10) (2026-05-21)
 
 
