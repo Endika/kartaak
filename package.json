@@ -1,7 +1,7 @@
 {
   "name": "kartaak",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "Flashcard study app with AI-generated cards, offline-first PWA",
   "scripts": {
