@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/Endika/kartaak/compare/v0.0.6...v0.0.7) (2026-05-21)
+
+
+### Features
+
+* **stats:** donut chart, 30-day trend bars and extended metrics ([1466df2](https://github.com/Endika/kartaak/commit/1466df2a9ee920217558b4cfca6f5c2ec0dc1634))
+
 ## [0.0.6](https://github.com/Endika/kartaak/compare/v0.0.5...v0.0.6) (2026-05-21)
 
 
