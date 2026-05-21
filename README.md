@@ -2,7 +2,7 @@
 
 > Learn at your own pace.
 
-**[Live demo →](https://endika.github.io/kartaak/)**
+**[Try it now →](https://endika.github.io/kartaak/)**
 
 [![Latest release](https://img.shields.io/github/v/release/Endika/kartaak?style=flat-square&color=0066FF&label=release)](https://github.com/Endika/kartaak/releases/latest)
 [![Deploy](https://img.shields.io/github/actions/workflow/status/Endika/kartaak/deploy.yml?style=flat-square&label=deploy&branch=main)](https://github.com/Endika/kartaak/actions/workflows/deploy.yml)
@@ -11,44 +11,53 @@
 [![Code style: Biome](https://img.shields.io/badge/code_style-biome-60A5FA?style=flat-square)](https://biomejs.dev)
 [![License: MIT](https://img.shields.io/github/license/Endika/kartaak?style=flat-square&color=10B981)](./LICENSE)
 
-Flashcard study app with AI-generated cards. Offline-first PWA — you study locally, the AI only runs when you ask it to generate or refine cards.
+Kartaak turns whatever you want to learn — a language, the periodic table, the plot of every Tarantino film — into a deck of flashcards in seconds. You describe it in your own words, an AI drafts the cards, and you study them with a satisfying 3D flip. Everything lives in your browser, including on your phone.
 
-## What works today
+## What you can do
 
-- **Describe what you want to study** in free text: theme, optional subtopics, free-form instructions, quantity.
-- **Preview before you pay**: the AI generates four sample cards first; you can regenerate or tweak the workflow before committing to the full batch.
-- **Full-deck generation** with automatic deduplication, stored in IndexedDB.
-- **Study with a 3D flip animation** — click, keyboard or horizontal swipe to reveal the back.
-- **Spaced repetition** updates as you rate each card incorrect / partial / correct.
+- **Type a topic, get a deck.** "Multiplication tables 7 and 8", "Spanish phrases for travelling", "Renaissance painters" — write it however you like. Kartaak does the rest.
+- **Preview before you commit.** Four sample cards arrive first so you can fine-tune the style without paying for a full batch.
+- **Study with a 3D flip.** Tap, swipe or press space to reveal the answer. Rate yourself **Incorrect**, **Partial** or **Correct** and the next-review date adapts on its own.
+- **Edit, report and fix.** Spotted a typo or a wrong answer? Edit it on the spot, or report the issue and let the AI propose a fix you can accept with one tap.
+- **Add more cards your way.** When you've outgrown the first batch, tweak the workflow (style, difficulty, even the model) and generate more — duplicates filtered automatically.
+- **Track your progress.** Streak counter, a status donut, a 30-day activity heatmap, a daily bar chart and a clean "best day" number — without ever touching a third-party tracker.
+- **Take it offline.** Installable PWA. Pin it to your phone's home screen and study on the train.
+- **Back up or share your decks.** Export any study as a JSON file, import it back later, or send it to a friend.
 
-## Try it
+## How to start
 
 1. Open the [live demo](https://endika.github.io/kartaak/).
-2. Click **Settings**, paste a [Gemini API key](https://aistudio.google.com/app/apikey) (kept in your browser only — never sent to a server).
-3. Hit **New study**, describe what you want to learn, generate a preview, then the full deck.
+2. Open **Settings** and paste a free [Gemini API key](https://aistudio.google.com/app/apikey). Claude and OpenAI work too. Your key never leaves your browser.
+3. Tap **+ New study**, describe what you want to learn, review the preview, then generate.
+4. Study a few cards a day. Come back tomorrow. Watch the heatmap fill up.
 
-## Run locally
+## Install on your phone
 
-```bash
-npm install
-npm run dev        # dev server
-npm run build      # production build
-npm run typecheck
-npm test
-```
+Open the demo in Chrome or Safari and use **"Add to Home Screen"**. You get a full-screen icon, offline study, and automatic updates when a new version ships.
 
-## Stack
+## Privacy, in plain English
 
-- TypeScript (strict) + Vanilla DOM — no framework
-- Vite
-- Tailwind CSS
-- Vitest + fake-indexeddb for integration tests
-- IndexedDB (studies + cards) and `localStorage` (API keys)
-- Service Worker for offline study (planned)
+There is no Kartaak server. Your studies, cards, progress and API keys all live in your own browser. The only network traffic is straight to the AI provider you choose, only when you ask Kartaak to generate or fix a card. Delete any study from the detail page; delete the whole site from your browser to wipe everything.
 
-## Architecture
+## AI providers
 
-Domain-Driven Design across four layers:
+| Provider | Default model | Direct from the browser? |
+| --- | --- | --- |
+| Google Gemini | `gemini-2.5-flash` | Yes — cheapest, recommended |
+| Anthropic Claude | `claude-haiku-4-5` | Yes — uses a documented header |
+| OpenAI | `gpt-4o-mini` | Usually no — CORS-blocked, needs a proxy |
+
+Pick a different provider per study, or swap mid-way when you "Add more cards".
+
+---
+
+## For developers
+
+Open-source, MIT licensed. PRs welcome.
+
+**Stack** — TypeScript (strict), vanilla DOM with no framework runtime, Vite, Tailwind CSS, Vitest, Workbox-powered service worker, Biome for lint and format, release-please for automatic versioning from Conventional Commits.
+
+**Architecture** — Domain-Driven Design across four layers:
 
 ```
 src/
@@ -58,18 +67,15 @@ src/
 └── presentation/    DOM rendering, styles, user interaction
 ```
 
-Path aliases (`@domain/*`, `@application/*`, etc.) are configured in `tsconfig.json` and `vite.config.ts`.
+**Local dev**
 
-## AI providers
+```bash
+npm install
+npm run dev        # dev server
+npm run build      # production build
+npm run lint
+npm run typecheck
+npm test
+```
 
-Gemini is wired today. OpenAI and Anthropic are planned and share the same `ICardGeneratorService` port, so adding them is dropping a new client and a model selector.
-
-## Roadmap
-
-- [ ] Edit cards inline + report issues + resolve issues with AI
-- [ ] Add-more flow with workflow editing and preview (Feature 9 v1.5)
-- [ ] Stats dashboard (heatmap, streak, learned %)
-- [ ] Export / import JSON (with workflow preserved)
-- [ ] PWA + service worker offline-first
-- [ ] OpenAI and Anthropic providers
-- [ ] Optional image-backed cards
+CI runs lint, typecheck, tests and the production build on every PR.
