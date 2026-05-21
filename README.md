@@ -2,22 +2,27 @@
 
 > Learn at your own pace.
 
+**[Live demo →](https://endika.github.io/kartaak/)**
+
+[![Deploy to GitHub Pages](https://github.com/Endika/kartaak/actions/workflows/deploy.yml/badge.svg)](https://github.com/Endika/kartaak/actions/workflows/deploy.yml)
+
 Flashcard study app with AI-generated cards. Offline-first PWA — you study locally, the AI only runs when you ask it to generate or refine cards.
 
-## Status
+## What works today
 
-Early development. Building the thin slice: create study → preview → generate → study with flip.
+- **Describe what you want to study** in free text: theme, optional subtopics, free-form instructions, quantity.
+- **Preview before you pay**: the AI generates four sample cards first; you can regenerate or tweak the workflow before committing to the full batch.
+- **Full-deck generation** with automatic deduplication, stored in IndexedDB.
+- **Study with a 3D flip animation** — click, keyboard or horizontal swipe to reveal the back.
+- **Spaced repetition** updates as you rate each card incorrect / partial / correct.
 
-## Stack
+## Try it
 
-- TypeScript (strict)
-- Vite
-- Tailwind CSS
-- Vitest
-- IndexedDB + localStorage
-- Vanilla DOM (no framework)
+1. Open the [live demo](https://endika.github.io/kartaak/).
+2. Click **Settings**, paste a [Gemini API key](https://aistudio.google.com/app/apikey) (kept in your browser only — never sent to a server).
+3. Hit **New study**, describe what you want to learn, generate a preview, then the full deck.
 
-## Commands
+## Run locally
 
 ```bash
 npm install
@@ -27,9 +32,18 @@ npm run typecheck
 npm test
 ```
 
+## Stack
+
+- TypeScript (strict) + Vanilla DOM — no framework
+- Vite
+- Tailwind CSS
+- Vitest + fake-indexeddb for integration tests
+- IndexedDB (studies + cards) and `localStorage` (API keys)
+- Service Worker for offline study (planned)
+
 ## Architecture
 
-Domain-Driven Design with four layers:
+Domain-Driven Design across four layers:
 
 ```
 src/
@@ -43,4 +57,14 @@ Path aliases (`@domain/*`, `@application/*`, etc.) are configured in `tsconfig.j
 
 ## AI providers
 
-The thin slice integrates Google Gemini. OpenAI and Anthropic are planned. API keys live in `localStorage` and never leave the browser.
+Gemini is wired today. OpenAI and Anthropic are planned and share the same `ICardGeneratorService` port, so adding them is dropping a new client and a model selector.
+
+## Roadmap
+
+- [ ] Edit cards inline + report issues + resolve issues with AI
+- [ ] Add-more flow with workflow editing and preview (Feature 9 v1.5)
+- [ ] Stats dashboard (heatmap, streak, learned %)
+- [ ] Export / import JSON (with workflow preserved)
+- [ ] PWA + service worker offline-first
+- [ ] OpenAI and Anthropic providers
+- [ ] Optional image-backed cards
