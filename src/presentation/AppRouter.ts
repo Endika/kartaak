@@ -39,7 +39,9 @@ export class AppRouter {
   constructor(
     private readonly root: HTMLElement,
     private readonly container: Container,
-  ) {}
+  ) {
+    container.i18n.onChange(() => this.render());
+  }
 
   start(): void {
     this.render();
@@ -57,13 +59,18 @@ export class AppRouter {
       case 'home':
         void renderHomePage(this.root, {
           router: this,
-          deps: { studies: c.studies, apiKeys: c.apiKeys, importStudy: c.importStudy },
+          deps: {
+            studies: c.studies,
+            apiKeys: c.apiKeys,
+            importStudy: c.importStudy,
+            i18n: c.i18n,
+          },
         });
         return;
       case 'settings':
         renderSettingsPage(this.root, {
           router: this,
-          deps: { apiKeys: c.apiKeys },
+          deps: { apiKeys: c.apiKeys, i18n: c.i18n },
         });
         return;
       case 'create-workflow':
@@ -71,7 +78,7 @@ export class AppRouter {
           this.root,
           {
             router: this,
-            deps: { apiKeys: c.apiKeys, generatePreview: c.generatePreview },
+            deps: { apiKeys: c.apiKeys, generatePreview: c.generatePreview, i18n: c.i18n },
           },
           this.view.draft,
         );
@@ -81,7 +88,11 @@ export class AppRouter {
           this.root,
           {
             router: this,
-            deps: { generatePreview: c.generatePreview, generateFullStudy: c.generateFullStudy },
+            deps: {
+              generatePreview: c.generatePreview,
+              generateFullStudy: c.generateFullStudy,
+              i18n: c.i18n,
+            },
           },
           this.view.workflow,
           this.view.previewCards,
@@ -96,6 +107,7 @@ export class AppRouter {
               reviewCard: c.reviewCard,
               editCard: c.editCard,
               markCardIssue: c.markCardIssue,
+              i18n: c.i18n,
             },
           },
           this.view.study,
@@ -116,6 +128,7 @@ export class AppRouter {
               resolveIssueWithAI: c.resolveIssueWithAI,
               applyIssueResolution: c.applyIssueResolution,
               deleteCard: c.deleteCard,
+              i18n: c.i18n,
             },
           },
           this.view.studyId,
@@ -131,6 +144,7 @@ export class AppRouter {
               apiKeys: c.apiKeys,
               generatePreview: c.generatePreview,
               addMoreCards: c.addMoreCards,
+              i18n: c.i18n,
             },
           },
           this.view.studyId,

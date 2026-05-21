@@ -1,3 +1,7 @@
+import { escapeHtml } from '@shared/utils/escapeHtml';
+
+export { escapeHtml };
+
 export function appShell(
   content: string,
   opts?: { back?: { label: string; onBackId: string } },
@@ -21,13 +25,4 @@ export function appShell(
       </footer>
     </div>
   `;
-}
-
-export function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }

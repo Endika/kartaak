@@ -19,9 +19,12 @@ import { OpenAICardGeneratorClient } from '@infrastructure/ai/clients/OpenAICard
 import { IssueResolverRouter } from '@infrastructure/ai/IssueResolverRouter';
 import { IndexedDBStudyRepository } from '@infrastructure/persistence/indexeddb/IndexedDBStudyRepository';
 import { LocalStorageApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
+import { detectLocale, I18n, LocalStorageLocalePreference } from '@shared/i18n';
 
 export class Container {
   readonly apiKeys = new LocalStorageApiKeyStorage();
+  readonly localePreference = new LocalStorageLocalePreference();
+  readonly i18n = new I18n(this.localePreference.load() ?? detectLocale(), this.localePreference);
   readonly studies = new IndexedDBStudyRepository();
   readonly generator = new CardGeneratorRouter({
     gemini: new GeminiCardGeneratorClient(this.apiKeys),

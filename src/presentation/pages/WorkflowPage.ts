@@ -6,6 +6,7 @@ import {
 } from '@domain/study/value-objects/StudyWorkflow';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
 import { ValidationError } from '@shared/errors/AppError';
+import type { I18n } from '@shared/i18n';
 import type { PageContext, WorkflowDraft } from '../AppRouter';
 import { appShell, escapeHtml } from '../components/Layout';
 import { MODEL_OPTIONS } from '../components/modelOptions';
@@ -14,6 +15,7 @@ import { wireToggleGroup } from '../components/toggleGroup';
 export interface WorkflowPageDeps {
   apiKeys: IApiKeyStorage;
   generatePreview: GenerateCardPreviewUseCase;
+  i18n: I18n;
 }
 
 type Ctx = PageContext<WorkflowPageDeps>;
@@ -25,6 +27,7 @@ export function renderWorkflowPage(
   ctx: Ctx,
   initialDraft?: WorkflowDraft,
 ): void {
+  const { i18n } = ctx.deps;
   const draft: WorkflowDraft = initialDraft ?? {
     theme: '',
     topicsRaw: '',
@@ -36,34 +39,34 @@ export function renderWorkflowPage(
 
   root.innerHTML = appShell(
     `
-    <h1 class="text-2xl font-bold mb-1">New study</h1>
-    <p class="text-slate-500 mb-6">Describe what you want to learn. The AI will draft a preview before generating the full deck.</p>
+    <h1 class="text-2xl font-bold mb-1">${i18n.t('workflow.title')}</h1>
+    <p class="text-slate-500 mb-6">${i18n.t('workflow.subtitle')}</p>
 
     <form id="workflow-form" class="space-y-5">
       ${fieldGroup({
-        label: 'Theme',
-        hint: 'What are you studying? e.g. "Multiplication tables", "Spanish for travel", "JavaScript closures".',
+        label: i18n.t('workflow.fields.theme'),
+        hint: i18n.t('workflow.fields.themeHint'),
         input: `<input id="theme" name="theme" required minlength="2" value="${escapeHtml(draft.theme)}"
                        class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-primary focus:outline-none" />`,
       })}
 
       ${fieldGroup({
-        label: 'Subtopics (optional)',
-        hint: 'Comma-separated. e.g. "7, 8" or "Travel, Restaurant, Hotel".',
+        label: i18n.t('workflow.fields.topics'),
+        hint: i18n.t('workflow.fields.topicsHint'),
         input: `<input id="topics" name="topics" value="${escapeHtml(draft.topicsRaw)}"
                        class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-primary focus:outline-none" />`,
       })}
 
       ${fieldGroup({
-        label: 'Generation instructions (optional)',
-        hint: 'Tell the AI how you want cards. Format, difficulty, style. Leave blank for sensible defaults.',
+        label: i18n.t('workflow.fields.instructions'),
+        hint: i18n.t('workflow.fields.instructionsHint'),
         input: `<textarea id="instructions" name="instructions" rows="4"
                           class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-primary focus:outline-none">${escapeHtml(draft.instructions)}</textarea>`,
       })}
 
       ${fieldGroup({
-        label: 'AI model',
-        hint: 'Pick a provider. Make sure you have its API key in Settings.',
+        label: i18n.t('workflow.fields.aiModel'),
+        hint: i18n.t('workflow.fields.aiModelHint'),
         input: `<div class="grid sm:grid-cols-3 gap-2" role="radiogroup">
           ${MODEL_OPTIONS.map(
             (m) => `<button type="button" data-model="${m.id}"
@@ -72,8 +75,8 @@ export function renderWorkflowPage(
                            ? 'border-primary bg-primary/5'
                            : 'border-slate-300 bg-white hover:border-primary'
 }">
-                       <div class="font-medium">${escapeHtml(m.label)}</div>
-                       <div class="text-xs text-slate-500 mt-0.5">${escapeHtml(m.hint)}</div>
+                       <div class="font-medium">${i18n.t(`model.${m.id}.label`)}</div>
+                       <div class="text-xs text-slate-500 mt-0.5">${i18n.t(`model.${m.id}.hint`)}</div>
                      </button>`,
           ).join('')}
         </div>
@@ -81,8 +84,8 @@ export function renderWorkflowPage(
       })}
 
       ${fieldGroup({
-        label: 'How many cards?',
-        hint: 'A preview of 4 cards is generated first — you only pay for the full batch once you approve.',
+        label: i18n.t('workflow.fields.quantity'),
+        hint: i18n.t('workflow.fields.quantityHint'),
         input: `<div class="flex flex-wrap gap-2" role="radiogroup">
           ${QUANTITY_OPTIONS.map(
             (q) => `<button type="button" data-quantity="${q}"
@@ -99,14 +102,14 @@ export function renderWorkflowPage(
       <div id="form-error" class="hidden rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700"></div>
 
       <div class="flex justify-end gap-3 pt-2">
-        <button type="button" id="cancel-btn" class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+        <button type="button" id="cancel-btn" class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition">${i18n.t('workflow.cancel')}</button>
         <button type="submit" id="submit-btn" class="px-5 py-2 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition disabled:opacity-50">
-          Generate preview →
+          ${i18n.t('workflow.submit')}
         </button>
       </div>
     </form>
   `,
-    { back: { label: 'Back', onBackId: 'back-btn' } },
+    { back: { label: i18n.t('workflow.back'), onBackId: 'back-btn' } },
   );
 
   root.querySelector('#back-btn')?.addEventListener('click', () => {
@@ -148,29 +151,30 @@ export function renderWorkflowPage(
         aiModel: data.aiModel,
       });
     } catch (err) {
-      const message = err instanceof ValidationError ? err.message : 'Invalid input';
+      const message =
+        err instanceof ValidationError ? err.message : i18n.t('workflow.invalidInput');
       errorBox.textContent = message;
       errorBox.classList.remove('hidden');
       return;
     }
 
     if (!ctx.deps.apiKeys.get(workflow.aiModel)) {
-      errorBox.textContent = `Set a ${workflow.aiModel} API key in Settings first.`;
+      errorBox.textContent = i18n.t('workflow.missingApiKey', { model: workflow.aiModel });
       errorBox.classList.remove('hidden');
       return;
     }
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Generating preview…';
+    submitBtn.textContent = i18n.t('workflow.submitBusy');
     try {
       const previewCards = await ctx.deps.generatePreview.execute(workflow);
       ctx.router.navigate({ type: 'preview', workflow, previewCards });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Preview failed';
+      const message = err instanceof Error ? err.message : i18n.t('workflow.previewFailed');
       errorBox.textContent = message;
       errorBox.classList.remove('hidden');
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Generate preview →';
+      submitBtn.textContent = i18n.t('workflow.submit');
     }
   });
 }

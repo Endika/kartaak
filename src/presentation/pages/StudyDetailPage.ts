@@ -10,6 +10,7 @@ import { pendingIssueCount } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
 import type { IStudyRepository } from '@domain/study/repositories/IStudyRepository';
 import { computeStats } from '@domain/study/services/studyStats';
+import type { I18n } from '@shared/i18n';
 import type { PageContext } from '../AppRouter';
 import { openEditCardModal } from '../components/EditCardModal';
 import { appShell, escapeHtml } from '../components/Layout';
@@ -28,6 +29,7 @@ export interface StudyDetailPageDeps {
   resolveIssueWithAI: ResolveIssueWithAIUseCase;
   applyIssueResolution: ApplyIssueResolutionUseCase;
   deleteCard: DeleteCardUseCase;
+  i18n: I18n;
 }
 
 type Ctx = PageContext<StudyDetailPageDeps>;
@@ -37,11 +39,13 @@ export async function renderStudyDetailPage(
   ctx: Ctx,
   studyId: string,
 ): Promise<void> {
+  const { i18n } = ctx.deps;
   const study = await ctx.deps.studies.findById(studyId);
   if (!study) {
-    root.innerHTML = appShell(`<p class="text-sm text-slate-500">Study not found.</p>`, {
-      back: { label: 'Home', onBackId: 'back-home' },
-    });
+    root.innerHTML = appShell(
+      `<p class="text-sm text-slate-500">${i18n.t('studyDetail.notFound')}</p>`,
+      { back: { label: i18n.t('studyDetail.backHome'), onBackId: 'back-home' } },
+    );
     root.querySelector('#back-home')?.addEventListener('click', () => {
       ctx.router.navigate({ type: 'home' });
     });
@@ -52,13 +56,15 @@ export async function renderStudyDetailPage(
 }
 
 function paint(root: HTMLElement, ctx: Ctx, study: Study): void {
+  const { i18n } = ctx.deps;
   const stats = computeStats(study);
   const issuesCount = study.cards.reduce((acc, c) => acc + pendingIssueCount(c), 0);
   const repaint = (next: Study): void => paint(root, ctx, next);
 
-  root.innerHTML = appShell(renderStudyDetailView(study, stats, issuesCount, renderStudyStats), {
-    back: { label: 'Studies', onBackId: 'back-home' },
-  });
+  root.innerHTML = appShell(
+    renderStudyDetailView(study, stats, issuesCount, (s) => renderStudyStats(s, i18n), i18n),
+    { back: { label: i18n.t('studyDetail.back'), onBackId: 'back-home' } },
+  );
 
   wireHeader(root, ctx, study, repaint);
   wireActions(root, ctx, study);
@@ -93,7 +99,7 @@ function wireActions(root: HTMLElement, ctx: Ctx, study: Study): void {
 function wireCards(root: HTMLElement, ctx: Ctx, study: Study, repaint: (s: Study) => void): void {
   for (const card of study.cards) {
     root.querySelector(`[data-edit-card="${card.id}"]`)?.addEventListener('click', () => {
-      openEditCardModal({ editCard: ctx.deps.editCard }, study, card, repaint);
+      openEditCardModal({ editCard: ctx.deps.editCard, i18n: ctx.deps.i18n }, study, card, repaint);
     });
   }
 }
@@ -108,6 +114,7 @@ function wireIssues(root: HTMLElement, ctx: Ctx, study: Study, repaint: (s: Stud
             resolveIssueWithAI: ctx.deps.resolveIssueWithAI,
             applyIssueResolution: ctx.deps.applyIssueResolution,
             deleteCard: ctx.deps.deleteCard,
+            i18n: ctx.deps.i18n,
           },
           study,
           card,
@@ -157,10 +164,12 @@ function exportStudy(ctx: Ctx, study: Study): Promise<void> {
 }
 
 function openRenameModal(ctx: Ctx, study: Study, onRenamed: (study: Study) => void): void {
+  const { i18n } = ctx.deps;
   const modal = openModal(
     {
-      title: 'Rename study',
-      primaryLabel: 'Save',
+      title: i18n.t('studyDetail.rename.modalTitle'),
+      primaryLabel: i18n.t('studyDetail.rename.save'),
+      secondaryLabel: i18n.t('app.cancel'),
       bodyHtml: `
         <input data-rename-input type="text" value="${escapeHtml(study.name)}"
                class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-primary focus:outline-none text-sm" />
@@ -168,7 +177,7 @@ function openRenameModal(ctx: Ctx, study: Study, onRenamed: (study: Study) => vo
     },
     async () => {
       const value = modal.root.querySelector<HTMLInputElement>('[data-rename-input]')?.value ?? '';
-      modal.setBusy(true, 'Saving…');
+      modal.setBusy(true, i18n.t('app.saving'));
       try {
         const next = await ctx.deps.renameStudy.execute(study.id, value);
         modal.close();
@@ -182,21 +191,21 @@ function openRenameModal(ctx: Ctx, study: Study, onRenamed: (study: Study) => vo
 }
 
 function confirmDelete(ctx: Ctx, study: Study): void {
+  const { i18n } = ctx.deps;
   const modal = openModal(
     {
-      title: 'Delete this study?',
-      primaryLabel: 'Delete',
-      secondaryLabel: 'Cancel',
+      title: i18n.t('studyDetail.delete.title'),
+      primaryLabel: i18n.t('studyDetail.delete.confirm'),
+      secondaryLabel: i18n.t('studyDetail.delete.cancel'),
       destructive: true,
       bodyHtml: `
         <p class="text-sm text-slate-600">
-          You are about to delete <strong>${escapeHtml(study.name)}</strong>, including
-          ${study.cards.length} cards and all progress. This cannot be undone.
+          ${i18n.t('studyDetail.delete.warning', { name: study.name, count: study.cards.length })}
         </p>
       `,
     },
     async () => {
-      modal.setBusy(true, 'Deleting…');
+      modal.setBusy(true, i18n.t('studyDetail.delete.busy'));
       await ctx.deps.deleteStudy.execute(study.id);
       modal.close();
       ctx.router.navigate({ type: 'home' });

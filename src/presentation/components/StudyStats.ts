@@ -1,22 +1,23 @@
 import type { StudyStatsSnapshot } from '@domain/study/services/studyStats';
+import type { I18n } from '@shared/i18n';
 import { escapeHtml } from './Layout';
 
-export function renderStudyStats(stats: StudyStatsSnapshot): string {
+export function renderStudyStats(stats: StudyStatsSnapshot, i18n: I18n): string {
   return `
     <section class="grid gap-4 lg:grid-cols-2 mb-6">
-      ${renderDonut(stats)}
-      ${renderTrend(stats)}
+      ${renderDonut(stats, i18n)}
+      ${renderTrend(stats, i18n)}
     </section>
 
     <section class="rounded-xl border border-slate-200 bg-white p-4 mb-6">
-      <h2 class="font-semibold text-sm mb-3">Activity · last 30 days</h2>
+      <h2 class="font-semibold text-sm mb-3">${i18n.t('stats.activityHeading')}</h2>
       ${renderHeatmap(stats)}
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-sm">
-        ${miniMetric('Streak', `${stats.streakDays} d`)}
-        ${miniMetric('Days studied (all-time)', String(stats.daysStudiedTotal))}
-        ${miniMetric('Avg / active day', stats.avgPerActiveDay.toString())}
+        ${miniMetric(i18n.t('stats.metrics.streak'), i18n.t('stats.metrics.streakUnit', { days: stats.streakDays }))}
+        ${miniMetric(i18n.t('stats.metrics.daysStudied'), String(stats.daysStudiedTotal))}
+        ${miniMetric(i18n.t('stats.metrics.avgActiveDay'), stats.avgPerActiveDay.toString())}
         ${miniMetric(
-          'Best day',
+          i18n.t('stats.metrics.bestDay'),
           stats.bestDay
             ? `${stats.bestDay.reviewed} · ${formatShortDate(stats.bestDay.date)}`
             : '—',
@@ -26,21 +27,21 @@ export function renderStudyStats(stats: StudyStatsSnapshot): string {
   `;
 }
 
-function renderDonut(stats: StudyStatsSnapshot): string {
+function renderDonut(stats: StudyStatsSnapshot, i18n: I18n): string {
   const total = stats.total;
   if (total === 0) {
     return `
       <div class="rounded-xl border border-slate-200 bg-white p-4 flex items-center justify-center min-h-[180px] text-sm text-slate-400">
-        No cards yet.
+        ${i18n.t('stats.noCards')}
       </div>
     `;
   }
 
   const circumference = 2 * Math.PI * 56;
   const segments = [
-    { label: 'New', value: stats.newCount, color: '#0ea5e9' },
-    { label: 'Learning', value: stats.learning, color: '#f59e0b' },
-    { label: 'Learned', value: stats.learned, color: '#10b981' },
+    { label: i18n.t('stats.distribution.new'), value: stats.newCount, color: '#0ea5e9' },
+    { label: i18n.t('stats.distribution.learning'), value: stats.learning, color: '#f59e0b' },
+    { label: i18n.t('stats.distribution.learned'), value: stats.learned, color: '#10b981' },
   ];
 
   let offset = 0;
@@ -67,7 +68,7 @@ function renderDonut(stats: StudyStatsSnapshot): string {
       <li class="flex items-center justify-between text-sm">
         <span class="flex items-center gap-2">
           <span class="inline-block h-2.5 w-2.5 rounded-sm" style="background:${seg.color}"></span>
-          ${seg.label}
+          ${escapeHtml(seg.label)}
         </span>
         <span class="text-slate-500">${seg.value}</span>
       </li>
@@ -77,12 +78,12 @@ function renderDonut(stats: StudyStatsSnapshot): string {
 
   return `
     <div class="rounded-xl border border-slate-200 bg-white p-4">
-      <h2 class="font-semibold text-sm mb-3">Card status</h2>
+      <h2 class="font-semibold text-sm mb-3">${i18n.t('stats.cardStatusHeading')}</h2>
       <div class="flex items-center gap-4">
-        <svg viewBox="0 0 160 160" class="w-32 h-32 shrink-0" aria-label="Card status distribution">
+        <svg viewBox="0 0 160 160" class="w-32 h-32 shrink-0" aria-label="${i18n.t('stats.donutAria')}">
           ${arcs}
           <text x="80" y="76" text-anchor="middle" font-size="22" font-weight="600" fill="#0f172a">${stats.learnedPct}%</text>
-          <text x="80" y="98" text-anchor="middle" font-size="11" fill="#64748b">learned</text>
+          <text x="80" y="98" text-anchor="middle" font-size="11" fill="#64748b">${i18n.t('stats.donutCenterLabel')}</text>
         </svg>
         <ul class="flex-1 space-y-1.5">${legend}</ul>
       </div>
@@ -90,7 +91,7 @@ function renderDonut(stats: StudyStatsSnapshot): string {
   `;
 }
 
-function renderTrend(stats: StudyStatsSnapshot): string {
+function renderTrend(stats: StudyStatsSnapshot, i18n: I18n): string {
   const max = Math.max(1, ...stats.daily.map((d) => d.reviewed));
   const width = 300;
   const height = 120;
@@ -121,8 +122,8 @@ function renderTrend(stats: StudyStatsSnapshot): string {
   return `
     <div class="rounded-xl border border-slate-200 bg-white p-4">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-sm">Reviewed · last 30 days</h2>
-        <span class="text-xs text-slate-500">${stats.reviewedLast30Days} total</span>
+        <h2 class="font-semibold text-sm">${i18n.t('stats.reviewedHeading')}</h2>
+        <span class="text-xs text-slate-500">${i18n.t('stats.totalReviewed', { count: stats.reviewedLast30Days })}</span>
       </div>
       <svg viewBox="0 0 ${width} ${height}" class="w-full h-32" preserveAspectRatio="none">
         ${bars}

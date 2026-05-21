@@ -1,17 +1,23 @@
+import type { I18n } from '@shared/i18n';
 import { escapeHtml } from './Layout';
 
-export function flipCardHtml(front: string, back: string, opts?: { id?: string }): string {
+export function flipCardHtml(
+  front: string,
+  back: string,
+  i18n: I18n,
+  opts?: { id?: string },
+): string {
   const id = opts?.id ?? 'flip-card';
   return `
-    <div id="${id}" class="flip-card mx-auto" tabindex="0" role="button" aria-label="Flashcard, tap to reveal answer">
+    <div id="${id}" class="flip-card mx-auto" tabindex="0" role="button" aria-label="${i18n.t('flipCard.aria')}">
       <div class="flip-card-inner">
         <div class="flip-card-face flip-card-front">
           <div>${escapeHtml(front)}</div>
-          <span class="flip-card-hint">tap to flip</span>
+          <span class="flip-card-hint">${i18n.t('flipCard.tapToFlip')}</span>
         </div>
         <div class="flip-card-face flip-card-back">
           <div>${escapeHtml(back)}</div>
-          <span class="flip-card-hint">tap to flip back</span>
+          <span class="flip-card-hint">${i18n.t('flipCard.tapToFlipBack')}</span>
         </div>
       </div>
     </div>
