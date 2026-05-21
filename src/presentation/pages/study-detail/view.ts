@@ -26,13 +26,15 @@ export function renderStudyDetailView(
         });
 
   return `
-    <header class="mb-6">
+    <header class="mb-5">
       <div class="flex items-start justify-between gap-3 mb-1">
         <h1 class="text-2xl font-bold">${escapeHtml(study.name)}</h1>
         <button id="rename-btn" class="text-sm text-slate-400 hover:text-primary transition shrink-0" aria-label="${i18n.t('studyDetail.renameAria')}">${i18n.t('studyDetail.rename')}</button>
       </div>
       <p class="text-sm text-slate-500">${subtitle}</p>
     </header>
+
+    ${renderHero(stats, i18n)}
 
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
       ${statTile(i18n.t('studyDetail.stats.total'), String(stats.total), 'slate')}
@@ -50,21 +52,58 @@ export function renderStudyDetailView(
 
     ${renderStudyStatsSnapshot(stats)}
 
-    <section class="flex flex-wrap gap-2 mb-6">
-      <button id="action-study" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition">${i18n.t('studyDetail.actions.study')}</button>
-      <button id="action-add-more" class="px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition">${i18n.t('studyDetail.actions.addMore')}</button>
-      <button id="action-export" class="px-4 py-2 rounded-lg border border-slate-300 text-sm hover:bg-slate-100 transition">${i18n.t('studyDetail.actions.export')}</button>
-      <button id="action-dedupe" class="px-4 py-2 rounded-lg border border-slate-300 text-sm hover:bg-slate-100 transition">${i18n.t('studyDetail.actions.dedupe')}</button>
-      <button id="action-delete" class="px-4 py-2 rounded-lg border border-red-200 text-sm text-danger hover:bg-red-50 transition ml-auto">${i18n.t('studyDetail.actions.delete')}</button>
-    </section>
-
     ${issuesCount > 0 ? renderIssuesSection(study, i18n) : ''}
 
-    <section>
+    <section class="mb-8">
       <h2 class="font-semibold mb-3">${i18n.t('studyDetail.cards.heading')} <span class="text-slate-400 font-normal">${i18n.t('studyDetail.cards.count', { count: stats.total })}</span></h2>
       <ul class="space-y-2">
         ${study.cards.map((c, i) => cardRow(c, i, i18n)).join('')}
       </ul>
+    </section>
+
+    ${renderManagementActions(i18n)}
+  `;
+}
+
+function renderHero(stats: StudyStatsSnapshot, i18n: I18n): string {
+  if (stats.total === 0) {
+    return `
+      <section class="mb-6 rounded-2xl border-2 border-dashed border-slate-300 px-5 py-6 text-center">
+        <p class="text-sm text-slate-500 mb-3">${i18n.t('studyDetail.actions.empty')}</p>
+        <button id="action-add-more" class="px-5 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition">
+          ${i18n.t('studyDetail.actions.addMore')}
+        </button>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="mb-6">
+      <button id="action-study"
+              class="group w-full rounded-2xl bg-primary text-white px-6 py-5 hover:opacity-95 transition shadow-sm flex items-center justify-center gap-4">
+        <span class="text-2xl">▶</span>
+        <span class="text-left">
+          <span class="block text-lg font-semibold tracking-wide">${escapeHtml(i18n.t('studyDetail.actions.study').replace(/^▶\s*/, ''))}</span>
+          <span class="block text-xs text-white/80 mt-0.5">
+            ${i18n.t('studyDetail.actions.studyHint', {
+              learned: stats.learned,
+              total: stats.total,
+              pct: stats.learnedPct,
+            })}
+          </span>
+        </span>
+      </button>
+    </section>
+  `;
+}
+
+function renderManagementActions(i18n: I18n): string {
+  return `
+    <section class="mt-8 pt-6 border-t border-slate-200 flex flex-wrap gap-2">
+      <button id="action-add-more" class="px-3 py-1.5 rounded-lg border border-slate-300 text-sm text-slate-600 hover:bg-slate-100 transition">${i18n.t('studyDetail.actions.addMore')}</button>
+      <button id="action-export" class="px-3 py-1.5 rounded-lg border border-slate-300 text-sm text-slate-600 hover:bg-slate-100 transition">${i18n.t('studyDetail.actions.export')}</button>
+      <button id="action-dedupe" class="px-3 py-1.5 rounded-lg border border-slate-300 text-sm text-slate-600 hover:bg-slate-100 transition">${i18n.t('studyDetail.actions.dedupe')}</button>
+      <button id="action-delete" class="px-3 py-1.5 rounded-lg border border-red-200 text-sm text-danger hover:bg-red-50 transition ml-auto">${i18n.t('studyDetail.actions.delete')}</button>
     </section>
   `;
 }

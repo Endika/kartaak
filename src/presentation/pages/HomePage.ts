@@ -133,6 +133,10 @@ export async function renderHomePage(root: HTMLElement, ctx: Ctx): Promise<void>
       root.querySelector(`[data-open-study="${study.id}"]`)?.addEventListener('click', () => {
         ctx.router.navigate({ type: 'study-detail', studyId: study.id });
       });
+      root.querySelector(`[data-quick-study="${study.id}"]`)?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        ctx.router.navigate({ type: 'study', study });
+      });
     }
   }
 }
@@ -199,18 +203,29 @@ function studyCard(study: Study, i18n: I18n): string {
   const learned = study.cards.filter((c) => c.status === 'learned').length;
   const total = study.cards.length;
   const pct = total === 0 ? 0 : Math.round((learned / total) * 100);
+  const canStudy = total > 0;
   return `
-    <li>
-      <button data-open-study="${study.id}" class="w-full text-left rounded-xl border border-slate-200 bg-white px-5 py-4 hover:border-primary transition">
-        <div class="flex justify-between items-start mb-2">
-          <span class="font-semibold">${escapeHtml(study.name)}</span>
-          <span class="text-xs text-slate-400">${i18n.t('home.studyCardCount', { count: total })}</span>
+    <li class="flex items-stretch gap-2 rounded-xl border border-slate-200 bg-white hover:border-primary transition overflow-hidden">
+      <button data-open-study="${study.id}" class="flex-1 text-left px-5 py-4 min-w-0">
+        <div class="flex justify-between items-start gap-3 mb-2">
+          <span class="font-semibold truncate">${escapeHtml(study.name)}</span>
+          <span class="text-xs text-slate-400 shrink-0">${i18n.t('home.studyCardCount', { count: total })}</span>
         </div>
         <div class="h-1.5 bg-slate-100 rounded overflow-hidden">
           <div class="h-full bg-success transition-all" style="width:${pct}%"></div>
         </div>
         <div class="text-xs text-slate-500 mt-1.5">${i18n.t('home.studyProgress', { learned, total, pct })}</div>
       </button>
+      ${canStudy ? quickStudyButton(study, i18n) : ''}
     </li>
+  `;
+}
+
+function quickStudyButton(study: { id: string; name: string }, i18n: I18n): string {
+  return `
+    <button data-quick-study="${study.id}" aria-label="${i18n.t('home.studyQuickPlay', { name: study.name })}"
+            class="shrink-0 w-14 flex items-center justify-center text-primary border-l border-slate-200 hover:bg-primary hover:text-white transition text-lg">
+      ▶
+    </button>
   `;
 }
