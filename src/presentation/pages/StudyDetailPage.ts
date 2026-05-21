@@ -54,6 +54,7 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
 
     <section class="flex flex-wrap gap-2 mb-6">
       <button id="action-study" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition">▶ Study</button>
+      <button id="action-add-more" class="px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition">+ Add more</button>
       <button id="action-export" class="px-4 py-2 rounded-lg border border-slate-300 text-sm hover:bg-slate-100 transition">📤 Export</button>
       <button id="action-delete" class="px-4 py-2 rounded-lg border border-red-200 text-sm text-danger hover:bg-red-50 transition ml-auto">🗑 Delete</button>
     </section>
@@ -80,6 +81,10 @@ function paint(root: HTMLElement, ctx: PageContext, study: Study): void {
 
   root.querySelector('#rename-btn')?.addEventListener('click', () => {
     openRenameModal(ctx, study, (next) => paint(root, ctx, next));
+  });
+
+  root.querySelector('#action-add-more')?.addEventListener('click', () => {
+    ctx.router.navigate({ type: 'add-more-cards', studyId: study.id });
   });
 
   root.querySelector('#action-export')?.addEventListener('click', () => {

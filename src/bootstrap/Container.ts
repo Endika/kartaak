@@ -1,3 +1,4 @@
+import { AddMoreCardsUseCase } from '@application/use-cases/AddMoreCardsUseCase';
 import { DeleteStudyUseCase } from '@application/use-cases/DeleteStudyUseCase';
 import { EditCardUseCase } from '@application/use-cases/EditCardUseCase';
 import { ExportStudyUseCase } from '@application/use-cases/ExportStudyUseCase';
@@ -26,6 +27,7 @@ export class Container {
 
   readonly generatePreview = new GenerateCardPreviewUseCase(this.generator);
   readonly generateFullStudy = new GenerateFullStudyUseCase(this.generator, this.studies);
+  readonly addMoreCards = new AddMoreCardsUseCase(this.generator, this.studies);
   readonly reviewCard = new ReviewCardUseCase(this.studies);
   readonly editCard = new EditCardUseCase(this.studies);
   readonly markCardIssue = new MarkCardIssueUseCase(this.studies);

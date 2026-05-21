@@ -2,6 +2,7 @@ import type { Container } from '@bootstrap/Container';
 import type { Card } from '@domain/study/entities/Card';
 import type { Study } from '@domain/study/entities/Study';
 import type { StudyWorkflow } from '@domain/study/value-objects/StudyWorkflow';
+import { renderAddMoreCardsPage } from './pages/AddMoreCardsPage';
 import { renderHomePage } from './pages/HomePage';
 import { renderPreviewPage } from './pages/PreviewPage';
 import { renderSettingsPage } from './pages/SettingsPage';
@@ -15,7 +16,8 @@ export type View =
   | { type: 'create-workflow'; draft?: WorkflowDraft }
   | { type: 'preview'; workflow: StudyWorkflow; previewCards: Card[] }
   | { type: 'study'; study: Study }
-  | { type: 'study-detail'; studyId: string };
+  | { type: 'study-detail'; studyId: string }
+  | { type: 'add-more-cards'; studyId: string };
 
 export interface WorkflowDraft {
   theme: string;
@@ -64,6 +66,9 @@ export class AppRouter {
         return;
       case 'study-detail':
         void renderStudyDetailPage(this.root, ctx, this.view.studyId);
+        return;
+      case 'add-more-cards':
+        void renderAddMoreCardsPage(this.root, ctx, this.view.studyId);
         return;
     }
   }
