@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.20](https://github.com/Endika/kartaak/compare/v0.0.19...v0.0.20) (2026-05-22)
+
+
+### Bug Fixes
+
+* **ci:** also delete the release-please head branch after auto-merge ([1bd843d](https://github.com/Endika/kartaak/commit/1bd843d84b8738c73da0a56fbd28e89f789df8b1))
+
 ## [0.0.19](https://github.com/Endika/kartaak/compare/v0.0.18...v0.0.19) (2026-05-22)
 
 
