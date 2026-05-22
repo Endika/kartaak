@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.18](https://github.com/Endika/kartaak/compare/v0.0.17...v0.0.18) (2026-05-22)
+
+
+### Features
+
+* **ci:** deploy to Pages on release, not on every push ([fffe0b7](https://github.com/Endika/kartaak/commit/fffe0b745445d3b5281e4c8e8a5c4b99b565c257))
+
 ## [0.0.17](https://github.com/Endika/kartaak/compare/v0.0.16...v0.0.17) (2026-05-22)
 
 
