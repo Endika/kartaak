@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.19](https://github.com/Endika/kartaak/compare/v0.0.18...v0.0.19) (2026-05-22)
+
+
+### Bug Fixes
+
+* **ci:** grant actions: write to enable workflow_dispatch self-rearm ([fde0b8e](https://github.com/Endika/kartaak/commit/fde0b8e898fbbce04690906b3d0aa005e9bc4158))
+
 ## [0.0.18](https://github.com/Endika/kartaak/compare/v0.0.17...v0.0.18) (2026-05-22)
 
 
