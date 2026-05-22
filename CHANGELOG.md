@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.16](https://github.com/Endika/kartaak/compare/v0.0.15...v0.0.16) (2026-05-22)
+
+
+### Bug Fixes
+
+* **ci:** delete PR branch on close regardless of merge state ([c730a1a](https://github.com/Endika/kartaak/commit/c730a1abc731c1079c3fbac137a7b38f5da88391))
+
 ## [0.0.15](https://github.com/Endika/kartaak/compare/v0.0.14...v0.0.15) (2026-05-22)
 
 
