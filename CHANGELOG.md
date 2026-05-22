@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.21](https://github.com/Endika/kartaak/compare/v0.0.20...v0.0.21) (2026-05-22)
+
+
+### Bug Fixes
+
+* **ci:** parse release-please pr payload in run script, not env ([cd5774d](https://github.com/Endika/kartaak/commit/cd5774d785926eb18e4520a65239d111f2c02783))
+
 ## [0.0.20](https://github.com/Endika/kartaak/compare/v0.0.19...v0.0.20) (2026-05-22)
 
 
