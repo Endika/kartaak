@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.17](https://github.com/Endika/kartaak/compare/v0.0.16...v0.0.17) (2026-05-22)
+
+
+### Bug Fixes
+
+* **ci:** re-trigger release-please via workflow_dispatch after auto-merge ([f1d110a](https://github.com/Endika/kartaak/commit/f1d110afa4cbad49d9108579b27a3ce74e1f1400))
+
 ## [0.0.16](https://github.com/Endika/kartaak/compare/v0.0.15...v0.0.16) (2026-05-22)
 
 
