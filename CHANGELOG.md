@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.15](https://github.com/Endika/kartaak/compare/v0.0.14...v0.0.15) (2026-05-22)
+
+
+### Bug Fixes
+
+* **release:** pass -R repo to gh pr merge ([0b9a82e](https://github.com/Endika/kartaak/commit/0b9a82e574479e2f1936a9c58006d24c00735305))
+
+
+### Documentation
+
+* **readme:** align structure with mintza and converthub ([1115c42](https://github.com/Endika/kartaak/commit/1115c422d1d67938279dfdb57b4413c68fa4cc2b))
+
 ## [0.0.14](https://github.com/Endika/kartaak/compare/v0.0.13...v0.0.14) (2026-05-21)
 
 
