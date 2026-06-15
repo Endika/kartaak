@@ -1,8 +1,7 @@
-@import "./card-flip.css";
+@import './card-flip.css' layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@config '../../../tailwind.config.js';
 
 @layer base {
   html,
