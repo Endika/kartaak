@@ -25,7 +25,7 @@
     "format:check": "biome format ."
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.0",
+    "@biomejs/biome": "2.5.0",
     "@types/node": "^25.9.3",
     "@vite-pwa/assets-generator": "^1.0.2",
     "autoprefixer": "^10.4.19",
