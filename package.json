@@ -27,7 +27,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
     "@tailwindcss/postcss": "^4.3.1",
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.0.0",
     "@vite-pwa/assets-generator": "^1.0.2",
     "fake-indexeddb": "^6.2.5",
     "jsdom": "^29.1.1",
