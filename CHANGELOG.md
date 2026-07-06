@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.22](https://github.com/Endika/kartaak/compare/v0.0.21...v0.0.22) (2026-07-06)
+
+
+### Bug Fixes
+
+* **ci:** stop release-please auto-merge loop ([a25e06f](https://github.com/Endika/kartaak/commit/a25e06fcdc965191d21d90773bb223251e5cdf12))
+
 ## [0.0.21](https://github.com/Endika/kartaak/compare/v0.0.20...v0.0.21) (2026-05-22)
 
 
