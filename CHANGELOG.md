@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.23](https://github.com/Endika/kartaak/compare/v0.0.22...v0.0.23) (2026-07-13)
+
+
+### Bug Fixes
+
+* prevent accidental pinch and double-tap zoom on mobile ([3e4c041](https://github.com/Endika/kartaak/commit/3e4c041849fca4d0efaf655b6ad8285ec6e41272))
+
 ## [0.0.22](https://github.com/Endika/kartaak/compare/v0.0.21...v0.0.22) (2026-07-06)
 
 
