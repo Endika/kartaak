@@ -40,6 +40,7 @@
     "workbox-window": "^7.4.1"
   },
   "overrides": {
-    "sharp": "^0.35.0"
+    "sharp": "^0.35.0",
+    "@babel/core": "^7.29.6"
   }
 }
