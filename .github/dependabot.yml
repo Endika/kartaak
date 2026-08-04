@@ -12,6 +12,10 @@ updates:
       prefix: "chore(deps)"
       prefix-development: "chore(deps-dev)"
     groups:
+      security-npm:
+        applies-to: security-updates
+        patterns:
+          - "*"
       minor-and-patch:
         update-types: [minor, patch]
 
@@ -25,5 +29,9 @@ updates:
     commit-message:
       prefix: "ci(actions)"
     groups:
+      security-actions:
+        applies-to: security-updates
+        patterns:
+          - "*"
       actions-minor-and-patch:
         update-types: [minor, patch]
