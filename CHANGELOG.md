@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.24](https://github.com/Endika/kartaak/compare/v0.0.23...v0.0.24) (2026-08-04)
+
+
+### Bug Fixes
+
+* override @babel/core to 7.29.6 to clear the workbox-build transitive copy ([6f720c7](https://github.com/Endika/kartaak/commit/6f720c7468e60450ed3e90693a7a66979b5118aa))
+* override sharp to 0.35 to clear the vulnerable transitive copy ([99fd765](https://github.com/Endika/kartaak/commit/99fd765a3346ac1224f715d06e44b27608f32ef9))
+
 ## [0.0.23](https://github.com/Endika/kartaak/compare/v0.0.22...v0.0.23) (2026-07-13)
 
 
