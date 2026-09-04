@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.25](https://github.com/Endika/kartaak/compare/v0.0.24...v0.0.25) (2026-09-04)
+
+
+### Bug Fixes
+
+* override browserslist to 4.28.7 to clear the transitive advisory ([#71](https://github.com/Endika/kartaak/issues/71)) ([d6a90e5](https://github.com/Endika/kartaak/commit/d6a90e5c525cf1e13cbb792656251df34ed47e36))
+
 ## [0.0.24](https://github.com/Endika/kartaak/compare/v0.0.23...v0.0.24) (2026-08-04)
 
 
