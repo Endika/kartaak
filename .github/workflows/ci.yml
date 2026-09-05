@@ -11,6 +11,8 @@ concurrency:
 
 jobs:
   verify:
+    # Frozen: this display name is the required status check on main, so renaming
+    # it would leave every PR waiting on a context that can never report again.
     name: Lint, typecheck, test, build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -24,14 +26,17 @@ jobs:
 
       - run: npm ci
 
-      - name: Lint and format (Biome)
+      - name: Format check
+        run: npm run format:check
+
+      - name: Lint
         run: npm run lint
 
-      - name: Typecheck
-        run: npm run typecheck
+      - name: Type check
+        run: npm run type:check
 
       - name: Test
-        run: npm test
+        run: npm run test:run
 
       - name: Build
         run: npm run build
