@@ -72,9 +72,11 @@ src/
 npm install
 npm run dev        # dev server
 npm run build      # production build
+npm run format:check
 npm run lint
-npm run typecheck
-npm test
+npm run type:check
+npm run test:run
 ```
 
-CI runs lint, typecheck, tests and the production build on every PR.
+CI runs format:check, lint, type:check, test:run and the production build on every PR.
+All four gates cover the sources and the colocated `__tests__` alike.
