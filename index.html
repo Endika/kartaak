@@ -15,7 +15,7 @@
     </style>
     <script>
       // iOS Safari ignores user-scalable=no, so block pinch-zoom explicitly.
-      document.addEventListener('gesturestart', function (e) {
+      document.addEventListener('gesturestart', (e) => {
         e.preventDefault()
       })
     </script>
