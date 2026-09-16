@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.28](https://github.com/Endika/kartaak/compare/v0.0.27...v0.0.28) (2026-09-16)
+
+
+### Features
+
+* **ci:** add CodeQL static analysis ([25bf0cd](https://github.com/Endika/kartaak/commit/25bf0cde19b7a327b2de7eef50833b5b0da81680))
+
 ## [0.0.27](https://github.com/Endika/kartaak/compare/v0.0.26...v0.0.27) (2026-09-16)
 
 
