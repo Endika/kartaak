@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.26](https://github.com/Endika/kartaak/compare/v0.0.25...v0.0.26) (2026-09-16)
+
+
+### Bug Fixes
+
+* **deps:** bump sharp to 0.35.4 ([f3d94bc](https://github.com/Endika/kartaak/commit/f3d94bc21fd7cc1822e7ac840e5c02ec3211e79a))
+
 ## [0.0.25](https://github.com/Endika/kartaak/compare/v0.0.24...v0.0.25) (2026-09-04)
 
 
