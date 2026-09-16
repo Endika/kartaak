@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.27](https://github.com/Endika/kartaak/compare/v0.0.26...v0.0.27) (2026-09-16)
+
+
+### Features
+
+* **ci:** block PRs that introduce high-severity dependency advisories ([8e1f555](https://github.com/Endika/kartaak/commit/8e1f555dd10fe0d69f8c50607b1f4a5ee257764d))
+
 ## [0.0.26](https://github.com/Endika/kartaak/compare/v0.0.25...v0.0.26) (2026-09-16)
 
 
