@@ -75,7 +75,7 @@ export function renderWorkflowPage(
                          m.id === draft.aiModel
                            ? 'border-primary bg-primary/5'
                            : 'border-slate-300 bg-white hover:border-primary'
-}">
+                       }">
                        <div class="font-medium">${i18n.t(`model.${m.id}.label`)}</div>
                        <div class="text-xs text-slate-500 mt-0.5">${i18n.t(`model.${m.id}.hint`)}</div>
                      </button>`,
@@ -94,7 +94,7 @@ export function renderWorkflowPage(
                          q === draft.quantity
                            ? 'border-primary bg-primary text-white'
                            : 'border-slate-300 bg-white hover:border-primary'
-}">${q}</button>`,
+                       }">${q}</button>`,
           ).join('')}
         </div>
         <input type="hidden" id="quantity" name="quantity" value="${draft.quantity}" />`,
