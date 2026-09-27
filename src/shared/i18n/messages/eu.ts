@@ -87,8 +87,7 @@ export const eu: Record<string, string> = {
   'settings.provider.openai.label': 'OpenAI',
   'settings.provider.anthropic.note':
     'Deiek dangerous-direct-browser-access goiburua erabiltzen dute. Proxyrik gabe dabil, baina zure gakoa anthropic.com-era zuzenean bidaltzen du.',
-  'settings.provider.openai.note':
-    'Deiak zure nabigatzailetik api.openai.com-era zuzenean doaz — gako okerra konexio-errore gisa agertzen da, OpenAI-ren errore-erantzunak ez baitu CORS goibururik.',
+  'settings.provider.openai.note': 'Deiak zure nabigatzailetik api.openai.com-era zuzenean doaz.',
 
   // WorkflowPage
   'workflow.title': 'Ikasketa berria',
