@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.30](https://github.com/Endika/kartaak/compare/v0.0.29...v0.0.30) (2026-09-27)
+
+
+### Bug Fixes
+
+* report a rejected OpenAI key instead of a connection error ([5c0eaf2](https://github.com/Endika/kartaak/commit/5c0eaf28e06704c6f84ccc3936d837b9b2bf99fe))
+
 ## [0.0.29](https://github.com/Endika/kartaak/compare/v0.0.28...v0.0.29) (2026-09-27)
 
 
