@@ -10,7 +10,7 @@ import {
   InvalidAIResponseError,
   MissingApiKeyError,
 } from '@shared/errors/AppError';
-import { mapFetchFailure, mapHttpError, safeJson } from '../errors';
+import { mapHttpError, mapOpenAIFetchFailure, safeJson } from '../errors';
 import { buildCardPrompt } from './prompts/cardPrompt';
 
 const OPENAI_MODEL = 'gpt-4o-mini';
@@ -56,7 +56,7 @@ export class OpenAICardGeneratorClient implements ICardGeneratorService {
         }),
       });
     } catch (cause) {
-      throw mapFetchFailure('openai', cause);
+      throw await mapOpenAIFetchFailure(apiKey, cause);
     }
 
     if (!response.ok) {

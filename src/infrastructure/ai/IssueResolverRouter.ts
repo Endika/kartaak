@@ -12,7 +12,7 @@ import {
   MissingApiKeyError,
 } from '@shared/errors/AppError';
 import { buildIssueResolverPrompt } from './clients/prompts/issueResolverPrompt';
-import { mapFetchFailure, mapHttpError, safeJson } from './errors';
+import { mapFetchFailure, mapHttpError, mapOpenAIFetchFailure, safeJson } from './errors';
 
 const GEMINI_MODEL = 'gemini-2.5-flash';
 const OPENAI_MODEL = 'gpt-4o-mini';
@@ -82,7 +82,7 @@ async function callOpenAI(prompt: string, apiKey: string): Promise<string> {
       }),
     });
   } catch (cause) {
-    throw mapFetchFailure('openai', cause);
+    throw await mapOpenAIFetchFailure(apiKey, cause);
   }
   if (!response.ok) throw mapHttpError('openai', response, await safeJson(response));
   const data = (await safeJson(response)) as {
