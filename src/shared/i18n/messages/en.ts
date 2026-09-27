@@ -83,8 +83,7 @@ export const en: Record<string, string> = {
   'settings.provider.openai.label': 'OpenAI',
   'settings.provider.anthropic.note':
     'Calls use the dangerous-direct-browser-access header. Works without a proxy but exposes your key on the wire to anthropic.com only.',
-  'settings.provider.openai.note':
-    "Calls go straight from your browser to api.openai.com — a wrong key shows up as a connection error, because OpenAI's error reply has no CORS header.",
+  'settings.provider.openai.note': 'Calls go straight from your browser to api.openai.com.',
 
   // WorkflowPage
   'workflow.title': 'New study',

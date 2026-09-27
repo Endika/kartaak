@@ -84,8 +84,7 @@ export const es: Record<string, string> = {
   'settings.provider.openai.label': 'OpenAI',
   'settings.provider.anthropic.note':
     'Las llamadas usan la cabecera dangerous-direct-browser-access. Funciona sin proxy pero expone tu clave al ir directo a anthropic.com.',
-  'settings.provider.openai.note':
-    'Las llamadas van directas de tu navegador a api.openai.com — una clave incorrecta aparece como error de conexión, porque la respuesta de error de OpenAI no trae cabecera CORS.',
+  'settings.provider.openai.note': 'Las llamadas van directas de tu navegador a api.openai.com.',
 
   // WorkflowPage
   'workflow.title': 'Nuevo estudio',
