@@ -26,7 +26,7 @@ Kartaak turns whatever you want to learn — a language, the periodic table, the
 ## How to start
 
 1. Open the [live demo](https://endika.github.io/kartaak/).
-2. Open **Settings** and paste a free [Gemini API key](https://aistudio.google.com/app/apikey). Claude and OpenAI work too. Your key never leaves your browser.
+2. Open **Settings** and paste a free [Gemini API key](https://aistudio.google.com/app/apikey). Claude and OpenAI work too.
 3. Tap **+ New study**, describe what you want to learn, review the preview, then generate.
 4. Study a few cards a day. Come back tomorrow. Watch the heatmap fill up.
 
@@ -44,7 +44,7 @@ There is no Kartaak server. Your studies, cards, progress and API keys all live 
 | --- | --- | --- |
 | Google Gemini | `gemini-2.5-flash` | Yes — cheapest, recommended |
 | Anthropic Claude | `claude-haiku-4-5` | Yes — uses a documented header |
-| OpenAI | `gpt-4o-mini` | Usually no — CORS-blocked, needs a proxy |
+| OpenAI | `gpt-4o-mini` | Yes — a wrong key shows up as a connection error |
 
 Pick a different provider per study, or swap mid-way when you "Add more cards".
 
