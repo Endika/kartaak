@@ -29,7 +29,7 @@ export const en: Record<string, string> = {
   'model.anthropic.label': 'Claude',
   'model.anthropic.hint': 'claude-haiku-4-5 · works browser-direct via header',
   'model.openai.label': 'OpenAI',
-  'model.openai.hint': 'gpt-4o-mini · CORS-blocked from browsers, needs proxy',
+  'model.openai.hint': 'gpt-4o-mini · works browser-direct',
 
   // Issue types (radio labels in MarkIssueModal)
   'issueType.incorrect': 'The answer is incorrect',
@@ -84,7 +84,7 @@ export const en: Record<string, string> = {
   'settings.provider.anthropic.note':
     'Calls use the dangerous-direct-browser-access header. Works without a proxy but exposes your key on the wire to anthropic.com only.',
   'settings.provider.openai.note':
-    'OpenAI does not currently allow browser-direct requests in most cases — expect CORS errors unless you run a proxy.',
+    "Calls go straight from your browser to api.openai.com — a wrong key shows up as a connection error, because OpenAI's error reply has no CORS header.",
 
   // WorkflowPage
   'workflow.title': 'New study',

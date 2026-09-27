@@ -33,7 +33,7 @@ export const eu: Record<string, string> = {
   'model.anthropic.label': 'Claude',
   'model.anthropic.hint': 'claude-haiku-4-5 · nabigatzailetik goiburuaren bidez',
   'model.openai.label': 'OpenAI',
-  'model.openai.hint': 'gpt-4o-mini · CORS blokeatuta, proxy bat behar du',
+  'model.openai.hint': 'gpt-4o-mini · nabigatzailetik zuzenean dabil',
 
   // Issue types
   'issueType.incorrect': 'Erantzuna okerra da',
@@ -88,7 +88,7 @@ export const eu: Record<string, string> = {
   'settings.provider.anthropic.note':
     'Deiek dangerous-direct-browser-access goiburua erabiltzen dute. Proxyrik gabe dabil, baina zure gakoa anthropic.com-era zuzenean bidaltzen du.',
   'settings.provider.openai.note':
-    'OpenAI-k ez ditu nabigatzailetik egindako deiak onartzen kasu gehienetan — CORS erroreak espero proxyrik ez baduzu.',
+    'Deiak zure nabigatzailetik api.openai.com-era zuzenean doaz — gako okerra konexio-errore gisa agertzen da, OpenAI-ren errore-erantzunak ez baitu CORS goibururik.',
 
   // WorkflowPage
   'workflow.title': 'Ikasketa berria',
