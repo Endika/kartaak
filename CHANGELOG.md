@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.29](https://github.com/Endika/kartaak/compare/v0.0.28...v0.0.29) (2026-09-27)
+
+
+### Bug Fixes
+
+* stop calling OpenAI CORS-blocked in the provider hints ([b6ea632](https://github.com/Endika/kartaak/commit/b6ea63270174b40cacdbf9be3171879b557a6df2))
+
 ## [0.0.28](https://github.com/Endika/kartaak/compare/v0.0.27...v0.0.28) (2026-09-16)
 
 
