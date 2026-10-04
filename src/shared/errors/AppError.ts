@@ -86,3 +86,19 @@ export class EmptyAIResponseError extends TypedAIError {
     this.name = 'EmptyAIResponseError';
   }
 }
+
+export type GeminiAccessReason =
+  | 'serviceBlocked'
+  | 'serviceDisabled'
+  | 'billingDisabled'
+  | 'keyRestricted';
+
+export class GeminiAccessError extends TypedAIError {
+  constructor(
+    public readonly reason: GeminiAccessReason,
+    cause?: unknown,
+  ) {
+    super('gemini', `gemini refused the request: ${reason}`, cause);
+    this.name = 'GeminiAccessError';
+  }
+}

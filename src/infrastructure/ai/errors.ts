@@ -1,12 +1,28 @@
 import {
   type AIProvider,
+  GeminiAccessError,
+  type GeminiAccessReason,
   InvalidApiKeyError,
   NetworkError,
   ProviderUnavailableError,
   RateLimitError,
 } from '@shared/errors/AppError';
 
+const GEMINI_ACCESS_REASONS: Record<string, GeminiAccessReason> = {
+  API_KEY_SERVICE_BLOCKED: 'serviceBlocked',
+  SERVICE_DISABLED: 'serviceDisabled',
+  BILLING_DISABLED: 'billingDisabled',
+  API_KEY_HTTP_REFERRER_BLOCKED: 'keyRestricted',
+  API_KEY_IP_ADDRESS_BLOCKED: 'keyRestricted',
+};
+
 export function mapHttpError(provider: AIProvider, response: Response, body: unknown): Error {
+  if (provider === 'gemini') {
+    const reason = googleErrorReason(body);
+    if (reason === 'API_KEY_INVALID') return new InvalidApiKeyError(provider, body);
+    const access = reason ? GEMINI_ACCESS_REASONS[reason] : undefined;
+    if (access) return new GeminiAccessError(access, body);
+  }
   if (response.status === 401 || response.status === 403) {
     return new InvalidApiKeyError(provider, body);
   }
@@ -14,6 +30,16 @@ export function mapHttpError(provider: AIProvider, response: Response, body: unk
     return new RateLimitError(provider, body);
   }
   return new ProviderUnavailableError(provider, response.status, body);
+}
+
+function googleErrorReason(body: unknown): string | undefined {
+  const details = (body as { error?: { details?: unknown } } | null)?.error?.details;
+  if (!Array.isArray(details)) return undefined;
+  for (const detail of details) {
+    const reason = (detail as { reason?: unknown } | null)?.reason;
+    if (typeof reason === 'string') return reason;
+  }
+  return undefined;
 }
 
 export function mapFetchFailure(provider: AIProvider, cause: unknown): NetworkError {

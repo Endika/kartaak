@@ -8,6 +8,14 @@ export const en: Record<string, string> = {
   // AI / network errors
   'error.ai.missingKey': 'No {provider} API key set. Add one in Settings.',
   'error.ai.invalidKey': 'The {provider} API key was rejected. Check it in Settings.',
+  'error.ai.gemini.serviceBlocked':
+    'This Google key is not allowed to use the Gemini API. Create a Gemini key at aistudio.google.com/app/apikey and save it in Settings.',
+  'error.ai.gemini.serviceDisabled':
+    "The Gemini API is turned off for this key's project. Turn it on at console.cloud.google.com/apis/library/generativelanguage.googleapis.com and try again.",
+  'error.ai.gemini.billingDisabled':
+    "Billing is off for this key's Google project. Check it at console.cloud.google.com/billing and try again.",
+  'error.ai.gemini.keyRestricted':
+    'This Google key is restricted to other websites or IP addresses. Allow this site at console.cloud.google.com/apis/credentials or use a key without restrictions.',
   'error.ai.rateLimit': '{provider} is throttling requests. Wait a moment and try again.',
   'error.ai.providerUnavailable':
     '{provider} is unavailable right now (HTTP {status}). Try again in a moment.',

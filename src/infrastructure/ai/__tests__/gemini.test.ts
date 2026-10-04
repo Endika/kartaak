@@ -2,6 +2,11 @@ import { createCard } from '@domain/study/entities/Card';
 import { createIssue } from '@domain/study/entities/CardIssue';
 import { type AIModelId, createWorkflow } from '@domain/study/value-objects/StudyWorkflow';
 import type { IApiKeyStorage } from '@infrastructure/storage/ApiKeyStorage';
+import {
+  GeminiAccessError,
+  InvalidApiKeyError,
+  ProviderUnavailableError,
+} from '@shared/errors/AppError';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GeminiCardGeneratorClient } from '../clients/GeminiCardGeneratorClient';
 import { IssueResolverRouter } from '../IssueResolverRouter';
@@ -34,6 +39,22 @@ function stubGemini(answer: Answer): void {
 
 function geminiText(text: string): Answer {
   return { status: 200, body: { candidates: [{ content: { parts: [{ text }] } }] } };
+}
+
+function googleError(status: number, reason?: string): Answer {
+  return {
+    status,
+    body: {
+      error: {
+        code: status,
+        message: 'irrelevant',
+        status: status === 400 ? 'INVALID_ARGUMENT' : 'PERMISSION_DENIED',
+        details: reason
+          ? [{ '@type': 'type.googleapis.com/google.rpc.ErrorInfo', reason, domain: 'x' }]
+          : [],
+      },
+    },
+  };
 }
 
 const CARDS = JSON.stringify([{ front: 'Hola', back: 'Hello' }]);
@@ -83,5 +104,33 @@ describe.each(Object.entries(callers))('Gemini %s', (_, { ok, call }) => {
     stubGemini(geminiText(ok));
     await call(AQ_KEY);
     expect(requests[0]?.searchParams.get('key')).toBe(AQ_KEY);
+  });
+
+  it('reports an invalid key when Google answers 400 API_KEY_INVALID', async () => {
+    stubGemini(googleError(400, 'API_KEY_INVALID'));
+    await expect(call(AQ_KEY)).rejects.toBeInstanceOf(InvalidApiKeyError);
+  });
+
+  it.each([
+    ['API_KEY_SERVICE_BLOCKED', 'serviceBlocked'],
+    ['SERVICE_DISABLED', 'serviceDisabled'],
+    ['BILLING_DISABLED', 'billingDisabled'],
+    ['API_KEY_HTTP_REFERRER_BLOCKED', 'keyRestricted'],
+    ['API_KEY_IP_ADDRESS_BLOCKED', 'keyRestricted'],
+  ])('names the cause when Google answers 403 %s', async (reason, expected) => {
+    stubGemini(googleError(403, reason));
+    const err = await call(AQ_KEY).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(GeminiAccessError);
+    expect((err as GeminiAccessError).reason).toBe(expected);
+  });
+
+  it('still reports a rejected key on a 403 without a known reason', async () => {
+    stubGemini(googleError(403));
+    await expect(call(AQ_KEY)).rejects.toBeInstanceOf(InvalidApiKeyError);
+  });
+
+  it('keeps reporting other 400s as the provider failing', async () => {
+    stubGemini(googleError(400));
+    await expect(call(AQ_KEY)).rejects.toBeInstanceOf(ProviderUnavailableError);
   });
 });
