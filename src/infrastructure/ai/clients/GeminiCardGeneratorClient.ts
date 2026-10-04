@@ -13,7 +13,7 @@ import {
 import { mapFetchFailure, mapHttpError, safeJson } from '../errors';
 import { buildCardPrompt } from './prompts/cardPrompt';
 
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-3.1-flash-lite';
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 interface GeminiResponse {

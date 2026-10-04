@@ -25,7 +25,7 @@ export const en: Record<string, string> = {
 
   // AI model options
   'model.gemini.label': 'Gemini',
-  'model.gemini.hint': 'gemini-2.5-flash · cheapest, works browser-direct',
+  'model.gemini.hint': 'gemini-3.1-flash-lite · recommended, works browser-direct',
   'model.anthropic.label': 'Claude',
   'model.anthropic.hint': 'claude-haiku-4-5 · works browser-direct via header',
   'model.openai.label': 'OpenAI',

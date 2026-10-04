@@ -38,7 +38,7 @@ const PROVIDERS: ProviderInfo[] = [
     inputId: 'key-gemini',
     saveId: 'save-gemini',
     clearId: 'clear-gemini',
-    placeholder: 'AIza...',
+    placeholder: 'AQ... / AIza...',
     helpUrl: 'https://aistudio.google.com/app/apikey',
     helpLabel: 'aistudio.google.com',
   },
