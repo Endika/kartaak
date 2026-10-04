@@ -8,6 +8,14 @@ export const es: Record<string, string> = {
   // Errores AI / red
   'error.ai.missingKey': 'No hay clave API de {provider}. Añádela en Ajustes.',
   'error.ai.invalidKey': '{provider} ha rechazado la clave API. Revísala en Ajustes.',
+  'error.ai.gemini.serviceBlocked':
+    'Esta clave de Google no puede usar la API de Gemini. Crea una clave de Gemini en aistudio.google.com/app/apikey y guárdala en Ajustes.',
+  'error.ai.gemini.serviceDisabled':
+    'La API de Gemini está desactivada en el proyecto de esta clave. Actívala en console.cloud.google.com/apis/library/generativelanguage.googleapis.com y reintenta.',
+  'error.ai.gemini.billingDisabled':
+    'La facturación está desactivada en el proyecto de Google de esta clave. Revísala en console.cloud.google.com/billing y reintenta.',
+  'error.ai.gemini.keyRestricted':
+    'Esta clave de Google está limitada a otras webs o direcciones IP. Permite esta web en console.cloud.google.com/apis/credentials o usa una clave sin restricciones.',
   'error.ai.rateLimit': '{provider} está limitando peticiones. Espera un momento y reintenta.',
   'error.ai.providerUnavailable':
     '{provider} no está disponible ahora mismo (HTTP {status}). Reintenta en un momento.',

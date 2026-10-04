@@ -1,6 +1,7 @@
 import {
   AIGenerationError,
   EmptyAIResponseError,
+  GeminiAccessError,
   InvalidAIResponseError,
   InvalidApiKeyError,
   MissingApiKeyError,
@@ -16,6 +17,9 @@ export function aiErrorMessage(err: unknown, i18n: I18n, fallbackKey: string): s
   }
   if (err instanceof InvalidApiKeyError) {
     return i18n.t('error.ai.invalidKey', { provider: err.provider });
+  }
+  if (err instanceof GeminiAccessError) {
+    return i18n.t(`error.ai.gemini.${err.reason}`);
   }
   if (err instanceof RateLimitError) {
     return i18n.t('error.ai.rateLimit', { provider: err.provider });

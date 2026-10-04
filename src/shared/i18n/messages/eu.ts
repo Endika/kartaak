@@ -9,6 +9,14 @@ export const eu: Record<string, string> = {
   // AA / sare erroreak
   'error.ai.missingKey': 'Ez dago {provider}-(e)ko API gakorik. Gehitu bat Ezarpenetan.',
   'error.ai.invalidKey': '{provider}-k API gakoa baztertu du. Berrikusi Ezarpenetan.',
+  'error.ai.gemini.serviceBlocked':
+    'Google gako honek ezin du Gemini APIa erabili. Sortu Gemini gako bat aistudio.google.com/app/apikey helbidean eta gorde Ezarpenetan.',
+  'error.ai.gemini.serviceDisabled':
+    'Gemini APIa desaktibatuta dago gako honen proiektuan. Aktibatu console.cloud.google.com/apis/library/generativelanguage.googleapis.com helbidean eta saiatu berriro.',
+  'error.ai.gemini.billingDisabled':
+    'Fakturazioa desaktibatuta dago gako honen Google proiektuan. Berrikusi console.cloud.google.com/billing helbidean eta saiatu berriro.',
+  'error.ai.gemini.keyRestricted':
+    'Google gako hau beste webgune edo IP helbide batzuetara mugatuta dago. Baimendu webgune hau console.cloud.google.com/apis/credentials helbidean edo erabili murrizketarik gabeko gako bat.',
   'error.ai.rateLimit':
     '{provider}-k eskaerak mugatzen ditu. Itxaron pixka bat eta saiatu berriro.',
   'error.ai.providerUnavailable':
