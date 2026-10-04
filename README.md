@@ -42,7 +42,7 @@ There is no Kartaak server. Your studies, cards, progress and API keys all live 
 
 | Provider | Default model | Direct from the browser? |
 | --- | --- | --- |
-| Google Gemini | `gemini-2.5-flash` | Yes — cheapest, recommended |
+| Google Gemini | `gemini-3.1-flash-lite` | Yes — recommended |
 | Anthropic Claude | `claude-haiku-4-5` | Yes — uses a documented header |
 | OpenAI | `gpt-4o-mini` | Yes |
 

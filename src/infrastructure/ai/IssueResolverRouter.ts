@@ -14,7 +14,7 @@ import {
 import { buildIssueResolverPrompt } from './clients/prompts/issueResolverPrompt';
 import { mapFetchFailure, mapHttpError, mapOpenAIFetchFailure, safeJson } from './errors';
 
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-3.1-flash-lite';
 const OPENAI_MODEL = 'gpt-4o-mini';
 const ANTHROPIC_MODEL = 'claude-haiku-4-5';
 const ANTHROPIC_VERSION = '2023-06-01';

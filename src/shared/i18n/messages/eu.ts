@@ -29,7 +29,7 @@ export const eu: Record<string, string> = {
 
   // AI model options
   'model.gemini.label': 'Gemini',
-  'model.gemini.hint': 'gemini-2.5-flash · merkeena, nabigatzailetik zuzenean dabil',
+  'model.gemini.hint': 'gemini-3.1-flash-lite · gomendatua, nabigatzailetik zuzenean dabil',
   'model.anthropic.label': 'Claude',
   'model.anthropic.hint': 'claude-haiku-4-5 · nabigatzailetik goiburuaren bidez',
   'model.openai.label': 'OpenAI',
