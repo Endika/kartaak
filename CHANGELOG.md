@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.31](https://github.com/Endika/kartaak/compare/v0.0.30...v0.0.31) (2026-10-04)
+
+
+### Bug Fixes
+
+* explain why Google rejects a Gemini key ([e9ac400](https://github.com/Endika/kartaak/commit/e9ac4001e8a7838bb462c4503fa4f3639c717cf7))
+* use a current Gemini model ([dbde8c7](https://github.com/Endika/kartaak/commit/dbde8c7242bcb52635bde1bedcfb5d3fc8a19e60))
+
 ## [0.0.30](https://github.com/Endika/kartaak/compare/v0.0.29...v0.0.30) (2026-09-27)
 
 
