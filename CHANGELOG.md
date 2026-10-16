@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.32](https://github.com/Endika/kartaak/compare/v0.0.31...v0.0.32) (2026-10-16)
+
+
+### Bug Fixes
+
+* **ai:** move OpenAI cards and fixes from gpt-4o-mini to gpt-6-luna ([1e4ce98](https://github.com/Endika/kartaak/commit/1e4ce98d82647b2ff0295e4f9758be7b8c08bbd3))
+
 ## [0.0.31](https://github.com/Endika/kartaak/compare/v0.0.30...v0.0.31) (2026-10-04)
 
 
