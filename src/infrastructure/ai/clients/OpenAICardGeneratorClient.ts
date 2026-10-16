@@ -13,7 +13,7 @@ import {
 import { mapHttpError, mapOpenAIFetchFailure, safeJson } from '../errors';
 import { buildCardPrompt } from './prompts/cardPrompt';
 
-const OPENAI_MODEL = 'gpt-4o-mini';
+const OPENAI_MODEL = 'gpt-6-luna';
 const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
 interface OpenAIResponse {
@@ -43,6 +43,7 @@ export class OpenAICardGeneratorClient implements ICardGeneratorService {
         },
         body: JSON.stringify({
           model: OPENAI_MODEL,
+          reasoning_effort: 'none',
           temperature: 0.7,
           response_format: { type: 'json_object' },
           messages: [

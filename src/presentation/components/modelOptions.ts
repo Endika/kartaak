@@ -13,5 +13,5 @@ export const MODEL_OPTIONS: ModelOption[] = [
     hint: 'gemini-3.1-flash-lite · recommended, works browser-direct',
   },
   { id: 'anthropic', label: 'Claude', hint: 'claude-haiku-4-5 · works browser-direct via header' },
-  { id: 'openai', label: 'OpenAI', hint: 'gpt-4o-mini · works browser-direct' },
+  { id: 'openai', label: 'OpenAI', hint: 'gpt-6-luna · works browser-direct' },
 ];

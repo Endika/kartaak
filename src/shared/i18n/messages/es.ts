@@ -38,7 +38,7 @@ export const es: Record<string, string> = {
   'model.anthropic.label': 'Claude',
   'model.anthropic.hint': 'claude-haiku-4-5 · desde el navegador vía cabecera',
   'model.openai.label': 'OpenAI',
-  'model.openai.hint': 'gpt-4o-mini · funciona desde el navegador',
+  'model.openai.hint': 'gpt-6-luna · funciona desde el navegador',
 
   // Issue types
   'issueType.incorrect': 'La respuesta es incorrecta',

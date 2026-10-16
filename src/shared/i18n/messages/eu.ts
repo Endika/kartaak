@@ -41,7 +41,7 @@ export const eu: Record<string, string> = {
   'model.anthropic.label': 'Claude',
   'model.anthropic.hint': 'claude-haiku-4-5 · nabigatzailetik goiburuaren bidez',
   'model.openai.label': 'OpenAI',
-  'model.openai.hint': 'gpt-4o-mini · nabigatzailetik zuzenean dabil',
+  'model.openai.hint': 'gpt-6-luna · nabigatzailetik zuzenean dabil',
 
   // Issue types
   'issueType.incorrect': 'Erantzuna okerra da',

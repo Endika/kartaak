@@ -44,7 +44,7 @@ There is no Kartaak server. Your studies, cards, progress and API keys all live 
 | --- | --- | --- |
 | Google Gemini | `gemini-3.1-flash-lite` | Yes — recommended |
 | Anthropic Claude | `claude-haiku-4-5` | Yes — uses a documented header |
-| OpenAI | `gpt-4o-mini` | Yes |
+| OpenAI | `gpt-6-luna` | Yes |
 
 Pick a different provider per study, or swap mid-way when you "Add more cards".
 

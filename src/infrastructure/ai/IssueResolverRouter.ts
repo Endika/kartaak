@@ -15,7 +15,7 @@ import { buildIssueResolverPrompt } from './clients/prompts/issueResolverPrompt'
 import { mapFetchFailure, mapHttpError, mapOpenAIFetchFailure, safeJson } from './errors';
 
 const GEMINI_MODEL = 'gemini-3.1-flash-lite';
-const OPENAI_MODEL = 'gpt-4o-mini';
+const OPENAI_MODEL = 'gpt-6-luna';
 const ANTHROPIC_MODEL = 'claude-haiku-4-5';
 const ANTHROPIC_VERSION = '2023-06-01';
 
@@ -69,6 +69,7 @@ async function callOpenAI(prompt: string, apiKey: string): Promise<string> {
       headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
         model: OPENAI_MODEL,
+        reasoning_effort: 'none',
         temperature: 0.4,
         response_format: { type: 'json_object' },
         messages: [

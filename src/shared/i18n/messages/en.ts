@@ -37,7 +37,7 @@ export const en: Record<string, string> = {
   'model.anthropic.label': 'Claude',
   'model.anthropic.hint': 'claude-haiku-4-5 · works browser-direct via header',
   'model.openai.label': 'OpenAI',
-  'model.openai.hint': 'gpt-4o-mini · works browser-direct',
+  'model.openai.hint': 'gpt-6-luna · works browser-direct',
 
   // Issue types (radio labels in MarkIssueModal)
   'issueType.incorrect': 'The answer is incorrect',
