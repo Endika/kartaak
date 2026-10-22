@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.33](https://github.com/Endika/kartaak/compare/v0.0.32...v0.0.33) (2026-10-22)
+
+
+### Bug Fixes
+
+* **deps:** bump sharp override to 0.35.5 for CVE-2026-96889 ([fb5f6e5](https://github.com/Endika/kartaak/commit/fb5f6e5d6449a0ecb09691192f6aeff75bf8d96f))
+
 ## [0.0.32](https://github.com/Endika/kartaak/compare/v0.0.31...v0.0.32) (2026-10-16)
 
 
