@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.34](https://github.com/Endika/kartaak/compare/v0.0.33...v0.0.34) (2026-10-26)
+
+
+### Bug Fixes
+
+* **deps:** patch serialize-javascript advisory ([d0154aa](https://github.com/Endika/kartaak/commit/d0154aa6fd018e16e861b4a36a0958872f1dca5e))
+
 ## [0.0.33](https://github.com/Endika/kartaak/compare/v0.0.32...v0.0.33) (2026-10-22)
 
 
