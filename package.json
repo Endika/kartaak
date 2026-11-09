@@ -26,8 +26,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.4",
-    "@tailwindcss/postcss": "^4.3.3",
+    "@biomejs/biome": "2.6.5",
+    "@tailwindcss/postcss": "^4.3.4",
     "@types/node": "^26.6.6",
     "@vite-pwa/assets-generator": "^1.0.4",
     "fake-indexeddb": "^6.2.7",
@@ -36,9 +36,9 @@
     "postcss": "^8.5.32",
     "tailwindcss": "^4.3.1",
     "typescript": "^7.0.2",
-    "vite": "^8.3.5",
+    "vite": "^8.3.6",
     "vite-plugin-pwa": "^2.0.0",
-    "vitest": "^5.0.5",
+    "vitest": "^5.1.0",
     "workbox-window": "^7.4.1"
   },
   "overrides": {
