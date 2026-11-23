@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.35](https://github.com/Endika/kartaak/compare/v0.0.34...v0.0.35) (2026-11-23)
+
+
+### Bug Fixes
+
+* **pwa:** precache the app again so installed apps update ([f99c248](https://github.com/Endika/kartaak/commit/f99c248460b4a266ad3df83cc760ec98b8ba4af8))
+
 ## [0.0.34](https://github.com/Endika/kartaak/compare/v0.0.33...v0.0.34) (2026-10-26)
 
 
